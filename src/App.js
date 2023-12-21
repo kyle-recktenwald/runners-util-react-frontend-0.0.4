@@ -9,11 +9,11 @@ import Layout from './components/layout/Layout';
 import Home from './pages/Home';
 import Keycloak from 'keycloak-js';
 
-// Create a context to hold the Keycloak instance
 export const KeycloakContext = createContext();
 
 function App() {
   const [keycloak, setKeycloak] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const keycloakInstance = new Keycloak({
@@ -31,6 +31,28 @@ function App() {
       setKeycloak(keycloakInstance);
     });
   }, []);
+
+  useEffect(() => {
+    const refreshToken = async () => {
+      try {
+        if (keycloak) {
+          console.log('User Authenticated: ' + keycloak.authenticated);
+          try {
+            const refreshed = await keycloak.updateToken(5);
+            console.log(refreshed ? 'Token was refreshed' : 'Token is still valid');
+            console.log('Token: ' + keycloak.token);
+          } catch (error) {
+              console.error('Failed to refresh the token:', error);
+          }
+        }
+      } catch (error) {
+        setError(error.message || 'An error occurred while refreshing the token.');
+      }
+    };
+
+    refreshToken();
+  }, [keycloak]);
+
   return (
     <KeycloakContext.Provider value={keycloak}>
       <Layout>

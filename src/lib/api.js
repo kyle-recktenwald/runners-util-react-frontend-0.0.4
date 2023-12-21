@@ -1,7 +1,13 @@
-const FIREBASE_DOMAIN = 'http://localhost:8080';
+import React, { useState, useEffect, useContext } from 'react';
 
-export async function getAllRuns() {
-  const response = await fetch(`${FIREBASE_DOMAIN}/runs`);
+const RUNNERS_UTIL_RESOURCE_DOMAIN = 'http://localhost:8080';
+
+export async function getAllRuns(token) {
+  const response = await fetch(`${RUNNERS_UTIL_RESOURCE_DOMAIN}/api/admin/test-runs`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   const data = await response.json();
 
   if (!response.ok) {
@@ -23,7 +29,7 @@ export async function getAllRuns() {
 }
 
 export async function getRunById(runId) {
-  const response = await fetch(`${FIREBASE_DOMAIN}/runs/${runId}`);
+  const response = await fetch(`${RUNNERS_UTIL_RESOURCE_DOMAIN}/runs/${runId}`);
   const data = await response.json();
 
   if (!response.ok) {
@@ -39,7 +45,7 @@ export async function getRunById(runId) {
 }
 
 export async function createRun(runData) {
-  const response = await fetch(`${FIREBASE_DOMAIN}/runs`, {
+  const response = await fetch(`${RUNNERS_UTIL_RESOURCE_DOMAIN}/runs`, {
     method: 'POST',
     body: JSON.stringify(runData),
     headers: {

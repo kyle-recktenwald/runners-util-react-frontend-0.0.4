@@ -49,3 +49,21 @@
   object-fit: cover;
   transform: rotateZ(-5deg) translateY(-4rem) translateX(-1rem);
 }
+
+/* Example CSS for user-circle and user-initials */
+.user-circle {
+  width: 40px;
+  height: 40px;
+  background-color: #ccc;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.user-initials {
+  font-size: 18px;
+  font-weight: bold;
+  color: #fff;
+}

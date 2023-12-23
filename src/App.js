@@ -13,6 +13,7 @@ export const KeycloakContext = createContext();
 
 function App() {
   const [keycloak, setKeycloak] = useState(null);
+  const [profile, setProfile] = useState(null); 
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -36,7 +37,6 @@ function App() {
     const refreshToken = async () => {
       try {
         if (keycloak) {
-          console.log('User Authenticated: ' + keycloak.authenticated);
           try {
             const refreshed = await keycloak.updateToken(5);
             console.log(refreshed ? 'Token was refreshed' : 'Token is still valid');
@@ -50,11 +50,28 @@ function App() {
       }
     };
 
+    const loadUserProfile = async () => {
+      try {
+        if (keycloak) {
+          try {
+            const profile = await keycloak.loadUserProfile();
+            console.log('Retrieved user profile:', profile);
+            setProfile(profile);
+          } catch (error) {
+              console.error('Failed to load user profile:', error);
+          }
+        }
+      } catch (error) {
+        setError(error.message || 'An error occurred while loading the user profile.');
+      }
+    };
+
     refreshToken();
+    loadUserProfile();
   }, [keycloak]);
 
   return (
-    <KeycloakContext.Provider value={keycloak}>
+    <KeycloakContext.Provider value={{ keycloak, profile }}>
       <Layout>
         <Switch>
           <Route path='/' exact>

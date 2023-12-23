@@ -8,7 +8,7 @@ import useHttp from '../hooks/use-http';
 import { getAllRuns } from '../lib/api';
 
 const AllRuns = () => {
-  const keycloak = useContext(KeycloakContext);
+  const { keycloak }  = useContext(KeycloakContext);
 
   const fetchAllRuns = useCallback(() => {
     if (!keycloak) {

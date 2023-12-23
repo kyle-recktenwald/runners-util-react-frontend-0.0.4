@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useContext } from 'react';
 
-function Home() {
+const HomePage = () => {
   return (
     <div>
+      <h1>Runner's Util!</h1>
     </div>
   );
-}
+};
 
-export default Home;
+export default HomePage;

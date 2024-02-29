@@ -43,7 +43,7 @@ const RunList = (props) => {
           <RunItem
             key={run.id}
             id={run.id}
-            dateTime={run.dateTime}
+            startDateTime={run.startDateTime}
             distance={run.distance}
             duration={run.duration}
           />

@@ -50,7 +50,10 @@
   transform: rotateZ(-5deg) translateY(-4rem) translateX(-1rem);
 }
 
-/* Example CSS for user-circle and user-initials */
+.user-icon {
+  position: relative;
+}
+
 .user-circle {
   width: 40px;
   height: 40px;
@@ -60,10 +63,50 @@
   justify-content: center;
   align-items: center;
   overflow: hidden;
+  position: absolute;
+  top: 50%; /* Center the user-circle vertically */
+  left: 50%; /* Center the user-circle horizontally */
+  transform: translate(-50%, -50%);
+  cursor: pointer; /* Add cursor:pointer to indicate it's clickable */
 }
 
 .user-initials {
   font-size: 18px;
   font-weight: bold;
   color: #fff;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 30px); /* Adjust the value as needed */
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #006060;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  z-index: 1;
+  display: none;
+  width: 200px; /* Adjust the width as needed */
+  padding: 10px; /* Add padding as needed */
+}
+
+.dropdown-text a {
+  text-decoration: none;
+  color: #88dfdf;
+  font-size: 1.25rem;
+  display: block;
+  padding: 8px 0; /* Add padding as needed */
+}
+
+.dropdown-text a:hover,
+.dropdown-text a:active,
+.dropdown-text a.active {
+  color: #e6fcfc;
+}
+
+.user-icon:hover .dropdown-menu {
+  display: block;
+}
+
+.user-icon:hover .dropdown-menu {
+  display: block;
 }

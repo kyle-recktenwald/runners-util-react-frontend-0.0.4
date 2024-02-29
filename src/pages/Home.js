@@ -1,11 +1,8 @@
-import React, { useContext } from 'react';
+import React from 'react';
+import Welcome from '../components/home/Welcome'
 
 const HomePage = () => {
-  return (
-    <div>
-      <h1>Runner's Util!</h1>
-    </div>
-  );
+  return <Welcome />
 };
 
 export default HomePage;

@@ -8,7 +8,7 @@ import useHttp from '../hooks/use-http';
 import { getAllRuns } from '../lib/api';
 
 const AllRuns = () => {
-  const { keycloak }  = useContext(KeycloakContext);
+  const { keycloak } = useContext(KeycloakContext);
 
   const fetchAllRuns = useCallback(() => {
     if (!keycloak) {
@@ -18,10 +18,15 @@ const AllRuns = () => {
     return getAllRuns(keycloak.token);
   }, [keycloak]);
 
-  const { sendRequest, status, data: loadedRuns, error } = useHttp(keycloak ? fetchAllRuns : null, true);
+  const { sendRequest, status, data: loadedRuns, error } = useHttp(
+    keycloak ? fetchAllRuns : null,
+    true
+  );
 
   useEffect(() => {
-    sendRequest();
+    if (keycloak) {
+      sendRequest();
+    }
   }, [sendRequest, keycloak]);
 
   if (status === 'pending') {
@@ -40,7 +45,7 @@ const AllRuns = () => {
     return <NoRunsFound />;
   }
 
-  return <RunList runs={loadedRuns} />;
+  return loadedRuns ? <RunList runs={loadedRuns} /> : null;
 };
 
 export default AllRuns;

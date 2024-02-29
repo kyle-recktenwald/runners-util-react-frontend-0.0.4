@@ -1,14 +1,14 @@
-import { Fragment } from 'react';
+import { Fragment, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useContext } from 'react';
 import { KeycloakContext } from '../../App';
-
 
 import classes from './MainNavigation.module.css';
 import runningBannerImage from '../../assets/running_banner.jpg';
 
 const MainNavigation = () => {
   const { profile } = useContext(KeycloakContext);
+  const [isDropdownOpen, setDropdownOpen] = useState(false);
 
   // Function to get user initials
   const getUserInitials = () => {
@@ -17,13 +17,21 @@ const MainNavigation = () => {
     }
     return null;
   };
+
+  const toggleDropdown = () => {
+    setDropdownOpen(!isDropdownOpen);
+  };
   
   return (
     <Fragment>
     <header className={classes.header}>
-      <div className={classes.logo}><NavLink to='/home'>Runner's Util</NavLink></div>
       <nav className={classes.nav}>
         <ul>
+        <li>
+            <NavLink to='/home' activeClassName={classes.active}>
+              Home
+            </NavLink>
+          </li>
           <li>
             <NavLink to='/runs' activeClassName={classes.active}>
               All Runs
@@ -36,7 +44,7 @@ const MainNavigation = () => {
           </li>
         </ul>
       </nav>
-      <div className={classes['user-icon']}>
+      <div className={classes['user-icon'] } onClick={toggleDropdown}>
           {profile ? (
             <div className={classes['user-circle']}>
               <div className={classes['user-initials']}>
@@ -48,14 +56,29 @@ const MainNavigation = () => {
               <img src="signin-icon.png" alt="Sign In" className={classes['signin-icon']} />
             </NavLink>
           )}
+          {isDropdownOpen && (
+            <div className={classes['dropdown-menu']}>
+              <div className={classes['dropdown-text']}>
+              <ul>
+                <li>
+                  <NavLink to='/account-settings'>Account Settings</NavLink>
+                </li>
+                {profile && profile.isAdmin && (
+                  <li>
+                    <NavLink to='/admin'>Admin Console</NavLink>
+                  </li>
+                )}
+              </ul>
+            </div>
+            </div>
+          )}
+
         </div>
     </header>
     <div className={classes['main-image']}>
         <img src={runningBannerImage} alt='A runner with a mountain in the distance.' />
       </div>
     </Fragment>
-    
-    
   );
 };
 

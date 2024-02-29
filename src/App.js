@@ -56,6 +56,8 @@ function App() {
           try {
             const profile = await keycloak.loadUserProfile();
             console.log('Retrieved user profile:', profile);
+            console.log('Admin Profile:', keycloak.hasRealmRole('app_admin'))
+            profile.isAdmin = keycloak.hasRealmRole('app_admin');
             setProfile(profile);
           } catch (error) {
               console.error('Failed to load user profile:', error);

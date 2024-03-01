@@ -8,6 +8,9 @@ import NotFound from './pages/NotFound';
 import Layout from './components/layout/Layout';
 import Home from './pages/Home';
 import Keycloak from 'keycloak-js';
+import AdminConsole from './pages/AdminConsole';
+import ManageData from './pages/ManageData'
+import ManageRunData from './pages/ManageRunData'
 
 export const KeycloakContext = createContext();
 
@@ -81,6 +84,15 @@ function App() {
           </Route>
           <Route path='/home' exact>
             <Home />
+          </Route>
+          <Route path='/admin/admin-console' exact>
+            <AdminConsole />
+          </Route>
+          <Route path='/admin/manage-data' exact>
+            <ManageData />
+          </Route>
+          <Route path='/admin/manage-data/runs' exact>
+            <ManageRunData />
           </Route>
           <Route path='/runs' exact>
             <AllRuns />

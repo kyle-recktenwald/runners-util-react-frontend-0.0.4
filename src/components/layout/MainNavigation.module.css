@@ -54,6 +54,12 @@
   position: relative;
 }
 
+.user-icon.active .dropdown-menu,
+.user-icon:hover .dropdown-menu,
+.dropdown-menu:hover {
+  display: block;
+}
+
 .user-circle {
   width: 40px;
   height: 40px;
@@ -78,7 +84,7 @@
 
 .dropdown-menu {
   position: absolute;
-  top: calc(100% + 30px); /* Adjust the value as needed */
+  top: calc(100% + 21px); /* Adjust the value as needed */
   left: 50%;
   transform: translateX(-50%);
   background-color: #006060;
@@ -87,6 +93,7 @@
   display: none;
   width: 200px; /* Adjust the width as needed */
   padding: 10px; /* Add padding as needed */
+  border-radius: 10px; /* Add border-radius for rounded corners */
 }
 
 .dropdown-text a {
@@ -94,19 +101,30 @@
   color: #88dfdf;
   font-size: 1.25rem;
   display: block;
-  padding: 8px 0; /* Add padding as needed */
+  padding: 6px 0; /* Add padding as needed */
 }
 
 .dropdown-text a:hover,
-.dropdown-text a:active,
-.dropdown-text a.active {
+.dropdown-text a:active {
   color: #e6fcfc;
 }
 
-.user-icon:hover .dropdown-menu {
-  display: block;
+.dropdown-menu ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
 }
 
-.user-icon:hover .dropdown-menu {
+/* Add this style to add a line between each dropdown menu selection */
+.dropdown-menu li {
+  border-top: 1px solid #837c7c; /* Adjust color as needed */
+  border-bottom: 1px solid #837c7c; /* Adjust color as needed */
+}
+
+.dropdown-text a {
+  text-decoration: none;
+  color: #88dfdf;
+  font-size: 1.25rem;
   display: block;
+  padding: 6px 0; /* Add padding as needed */
 }

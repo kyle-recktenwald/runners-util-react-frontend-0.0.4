@@ -1,0 +1,63 @@
+.h1 {
+  text-align: center;
+}
+
+.buttonContainer {
+    text-align: left;
+}
+
+.runTableContainer {
+  overflow-x: auto;
+  margin-top: 20px;
+}
+
+.runTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.tableRow {
+  border-bottom: 1px solid #ddd;
+}
+
+.tableHeader,
+.tableCell {
+  border: 1px solid #ddd;
+  padding: 0em 2em;
+  min-width: 200px; /* Adjust min-width as needed */
+  text-align: center;
+}
+
+.tableHeader {
+  font-weight: bold;
+  background-color: #008080;
+  color: #fff;
+}
+
+.editCell {
+  text-align: center;
+}
+
+.viewButton,
+.editButton,
+.deleteButton,
+.sortButton,
+.createButton {
+  background-color: #008080;
+  color: #fff;
+  padding: 8px 12px;
+  margin: 2px;
+  font-size: 14px;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.editButton:hover,
+.deleteButton:hover,
+.sortButton:hover,
+.createButton:hover {
+  background-color: #006060;
+}

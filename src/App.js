@@ -11,6 +11,7 @@ import Keycloak from 'keycloak-js';
 import AdminConsole from './pages/AdminConsole';
 import ManageData from './pages/ManageData'
 import ManageRunData from './pages/ManageRunData'
+import AdminCreateRun from './pages/AdminCreateRun';
 
 export const KeycloakContext = createContext();
 
@@ -93,6 +94,9 @@ function App() {
           </Route>
           <Route path='/admin/manage-data/runs' exact>
             <ManageRunData />
+          </Route>
+          <Route path='/admin/manage-data/runs/create' exact>
+            <AdminCreateRun />
           </Route>
           <Route path='/runs' exact>
             <AllRuns />

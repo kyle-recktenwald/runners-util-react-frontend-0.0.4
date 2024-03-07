@@ -1,7 +1,7 @@
 import classes from './AdminRunTable.module.css';
 import Card from '../UI/Card';
 import WideCard from '../UI/WideCard';
-import { useHistory, useLocation } from 'react-router-dom';
+import { NavLink, useHistory, useLocation } from 'react-router-dom';
 import { Fragment } from 'react';
 
 const sortRuns = (runs, ascending) => {
@@ -48,6 +48,11 @@ const AdminRunTable = (props) => {
   const history = useHistory();
   const location = useLocation();
 
+  const createRunHandler = () => {
+    // Navigate to the AdminCreateRun page when the "Create Run" button is clicked
+    history.push('/admin/create-run');
+  };
+
   const queryParams = new URLSearchParams(location.search);
 
   const isSortingAscending = queryParams.get('sort') === 'asc';
@@ -69,7 +74,9 @@ const AdminRunTable = (props) => {
       <WideCard>
         <div className={classes.runTableContainer}>
           <div className={classes.buttonContainer}>
-            <button className={classes.createButton}>Create Run</button>
+            <NavLink to="/admin/manage-data/runs/create" className={classes.createButton}>
+              Create Run
+            </NavLink>
             <button className={classes.sortButton} onClick={changeSortingHandler}>Sort {isSortingAscending ? 'Descending' : 'Ascending'}</button>
           </div>
           <table className={classes.runTable}>

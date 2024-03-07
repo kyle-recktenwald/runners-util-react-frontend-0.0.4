@@ -1,4 +1,4 @@
-import classes from './FullRunTable.module.css';
+import classes from './AdminRunTable.module.css';
 import Card from '../UI/Card';
 import WideCard from '../UI/WideCard';
 import { useHistory, useLocation } from 'react-router-dom';
@@ -44,7 +44,7 @@ function formatDuration(milliseconds) {
   return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
 }
 
-const FullRunTable = (props) => {
+const AdminRunTable = (props) => {
   const history = useHistory();
   const location = useLocation();
 
@@ -76,7 +76,7 @@ const FullRunTable = (props) => {
             <thead>
               <tr className={classes.tableHeader}>
                 <th className={classes.tableCell}>Actions</th>
-                <th className={classes.tableCell}>Run ID</th>
+                <th className={classes.tableCell}>ID</th>
                 <th className={classes.tableCell}>Distance</th>
                 <th className={classes.tableCell}>Duration</th>
                 <th className={classes.tableCell}>Route ID</th>
@@ -87,7 +87,6 @@ const FullRunTable = (props) => {
                 <th className={classes.tableCell}>Created By User ID</th>
                 <th className={classes.tableCell}>Updated By User ID</th>
                 <th className={classes.tableCell}>Run Owner User ID</th>
-                <th className={classes.editDeleteCell}></th>
               </tr>
             </thead>
             <tbody>
@@ -119,4 +118,4 @@ const FullRunTable = (props) => {
   );
 };
 
-export default FullRunTable;
+export default AdminRunTable;

@@ -1,10 +1,10 @@
 import { React, useEffect, useContext, useCallback } from 'react';
-import ManageRunDataMenu from '../components/manage-data/ManageRunDataMenu'
 import { KeycloakContext } from '../App';
 import LoadingSpinner from '../components/UI/LoadingSpinner';
 import NoRunsFound from '../components/runs/NoRunsFound';
 import useHttp from '../hooks/use-http';
 import { getAllRuns } from '../lib/api';
+import AdminRunTable from '../components/runs/AdminRunTable';
 
 const ManageRunData = () => {
   const { keycloak } = useContext(KeycloakContext);
@@ -43,7 +43,7 @@ const ManageRunData = () => {
     return <NoRunsFound />;
   }
 
-  return loadedRuns ? <ManageRunDataMenu runs={loadedRuns} /> : null;
+  return loadedRuns ? <AdminRunTable runs={loadedRuns} /> : null;
 };
 
 export default ManageRunData;

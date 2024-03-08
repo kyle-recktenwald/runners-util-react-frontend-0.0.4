@@ -1,42 +1,46 @@
-import React, { useContext, useState, useEffect } from 'react';
-import { useHistory  } from 'react-router-dom';
+import React, { useContext, useState, useEffect, useCallback } from 'react';
+import useHttp from '../../hooks/use-http';
+import { useHistory } from 'react-router-dom';
 import { KeycloakContext } from '../../App';
 import Card from '../UI/Card';
 import WideCard from '../UI/WideCard';
 import classes from './AdminCreateRunForm.module.css';
-import { getAllUserIds } from '../../lib/keycloak-server-api'; // Replace with the actual path
+import { getAllUserIds } from '../../lib/keycloak-server-api';
 
 const AdminCreateRunForm = () => {
-  const { profile } = useContext(KeycloakContext);
+  const { profile, keycloak } = useContext(KeycloakContext);
   const history = useHistory();
-  
+
   // State for form fields
-  const [userIds, setUserIds] = useState([]);
-  const [selectedUserId, setSelectedUserId] = useState('');
+  const [selectedUserId, setSelectedUserId] = useState(''); // Conditionally set the initial value
   const [distance, setDistance] = useState('');
   const [duration, setDuration] = useState('');
   // Add more state variables for other form fields
 
+  const fetchUserIds = useCallback(() => {
+    if (!keycloak) {
+      console.log('Error: No Keycloak instance');
+      return Promise.resolve([]);
+    }
+    return getAllUserIds(keycloak.token);
+  }, [keycloak]);
+
+  const { sendRequest, status, data: loadedUserIds, error } = useHttp(
+    keycloak ? fetchUserIds : null, true
+  );
+
   useEffect(() => {
-    const fetchUserIds = async () => {
-      try {
-        const fetchedUserIds = await getAllUserIds(profile.token);
-        setUserIds(fetchedUserIds);
-      } catch (error) {
-        console.error('Error fetching user IDs:', error);
-      }
-    };
-
-    fetchUserIds();
-  }, []);
-
+    if (keycloak) {
+      sendRequest();
+    }
+  }, [sendRequest, keycloak]);
 
   const createRunHandler = (event) => {
     event.preventDefault();
 
-    // Perform form validation and submission logic here
-    // For simplicity, let's just log the form data for now
-    console.log('Form submitted:', { distance, duration });
+    // Form Validation
+
+    console.log('Form submitted:', { selectedUserId, distance, duration });
 
     // Redirect back to the AdminRunTable page after creating the run
     history.push('/admin-run-table');
@@ -49,22 +53,43 @@ const AdminCreateRunForm = () => {
       </Card>
       <WideCard>
         <form onSubmit={createRunHandler}>
-        <label>
+          <label>
             User ID:
-            <select value={selectedUserId} onChange={(e) => setSelectedUserId(e.target.value)}>
-              <option value="" disabled>
-                Select User ID
-              </option>
-              {userIds.map((userId) => (
-                <option key={userId} value={userId}>
-                  {userId}
-                </option>
-              ))}
-            </select>
+            {loadedUserIds ? (
+              <select value={selectedUserId} onChange={(e) => setSelectedUserId(e.target.value)}>
+                {loadedUserIds.map((userId) => (
+                  <option key={userId} value={userId}>
+                    {userId}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <span>Loading...</span>
+            )}
           </label>
           <label>
-            Distance (yards):
-            <input type="number" value={distance} onChange={(e) => setDistance(e.target.value)} />
+            Distance (miles):
+            <input
+              type="text"
+              value={distance}
+              onChange={(e) => {
+                const input = e.target.value;
+                if (/^\d*\.?\d*$/.test(input)) {
+                  setDistance(input);
+                }
+              }}
+              onKeyDown={(e) => {
+                // Allow only numeric and decimal characters, backspace, and delete
+                const isValidChar =
+                  /^\d$/.test(e.key) ||
+                  e.key === '.' ||
+                  e.key === 'Backspace' ||
+                  e.key === 'Delete';
+                if (!isValidChar) {
+                  e.preventDefault();
+                }
+              }}
+            />
           </label>
           <label>
             Duration (milliseconds):

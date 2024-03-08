@@ -5,7 +5,7 @@ import RunList from '../components/runs/RunList';
 import LoadingSpinner from '../components/UI/LoadingSpinner';
 import NoRunsFound from '../components/runs/NoRunsFound';
 import useHttp from '../hooks/use-http';
-import { getAllRuns } from '../lib/api';
+import { getAllRuns } from '../lib/resource-server-api';
 
 const AllRuns = () => {
   const { keycloak } = useContext(KeycloakContext);

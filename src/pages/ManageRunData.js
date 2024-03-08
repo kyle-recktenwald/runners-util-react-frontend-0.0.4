@@ -3,7 +3,7 @@ import { KeycloakContext } from '../App';
 import LoadingSpinner from '../components/UI/LoadingSpinner';
 import NoRunsFound from '../components/runs/NoRunsFound';
 import useHttp from '../hooks/use-http';
-import { getAllRuns } from '../lib/api';
+import { getAllRuns } from '../lib/resource-server-api';
 import AdminRunTable from '../components/runs/AdminRunTable';
 
 const ManageRunData = () => {

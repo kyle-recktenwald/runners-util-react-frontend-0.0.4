@@ -1,16 +1,35 @@
-import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { useContext, useState, useEffect } from 'react';
+import { useHistory  } from 'react-router-dom';
+import { KeycloakContext } from '../../App';
 import Card from '../UI/Card';
 import WideCard from '../UI/WideCard';
 import classes from './AdminCreateRunForm.module.css';
+import { getAllUserIds } from '../../lib/keycloak-server-api'; // Replace with the actual path
 
 const AdminCreateRunForm = () => {
+  const { profile } = useContext(KeycloakContext);
   const history = useHistory();
-
+  
   // State for form fields
+  const [userIds, setUserIds] = useState([]);
+  const [selectedUserId, setSelectedUserId] = useState('');
   const [distance, setDistance] = useState('');
   const [duration, setDuration] = useState('');
   // Add more state variables for other form fields
+
+  useEffect(() => {
+    const fetchUserIds = async () => {
+      try {
+        const fetchedUserIds = await getAllUserIds(profile.token);
+        setUserIds(fetchedUserIds);
+      } catch (error) {
+        console.error('Error fetching user IDs:', error);
+      }
+    };
+
+    fetchUserIds();
+  }, []);
+
 
   const createRunHandler = (event) => {
     event.preventDefault();
@@ -30,6 +49,19 @@ const AdminCreateRunForm = () => {
       </Card>
       <WideCard>
         <form onSubmit={createRunHandler}>
+        <label>
+            User ID:
+            <select value={selectedUserId} onChange={(e) => setSelectedUserId(e.target.value)}>
+              <option value="" disabled>
+                Select User ID
+              </option>
+              {userIds.map((userId) => (
+                <option key={userId} value={userId}>
+                  {userId}
+                </option>
+              ))}
+            </select>
+          </label>
           <label>
             Distance (yards):
             <input type="number" value={distance} onChange={(e) => setDistance(e.target.value)} />

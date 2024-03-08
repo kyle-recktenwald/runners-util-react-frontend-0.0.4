@@ -3,7 +3,7 @@ import { useParams, Route, Link, useRouteMatch } from 'react-router-dom';
 
 import HighlightedRun from '../components/runs/HighlightedRun';
 import useHttp from '../hooks/use-http';
-import { getRunById } from '../lib/api';
+import { getRunById } from '../lib/resource-server-api';
 import LoadingSpinner from '../components/UI/LoadingSpinner';
 
 const RunDetail = () => {

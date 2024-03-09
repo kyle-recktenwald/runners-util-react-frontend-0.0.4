@@ -1,39 +1,23 @@
-import React, { useContext, useState, useEffect, useCallback } from 'react';
-import useHttp from '../../hooks/use-http';
+import React, { useState, useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
-import { KeycloakContext } from '../../App';
 import Card from '../UI/Card';
 import WideCard from '../UI/WideCard';
 import classes from './AdminCreateRunForm.module.css';
 import { getAllUserIds } from '../../lib/keycloak-server-api';
+import useAuthRequest from '../../hooks/use-http';
 
 const AdminCreateRunForm = () => {
-  const { profile, keycloak } = useContext(KeycloakContext);
   const history = useHistory();
 
-  // State for form fields
-  const [selectedUserId, setSelectedUserId] = useState(''); // Conditionally set the initial value
+  const [selectedUserId, setSelectedUserId] = useState('');
   const [distance, setDistance] = useState('');
   const [duration, setDuration] = useState('');
-  // Add more state variables for other form fields
 
-  const fetchUserIds = useCallback(() => {
-    if (!keycloak) {
-      console.log('Error: No Keycloak instance');
-      return Promise.resolve([]);
-    }
-    return getAllUserIds(keycloak.token);
-  }, [keycloak]);
+  const fetchUserIds = useCallback(async (token) => {
+    return getAllUserIds(token);
+  }, []);
 
-  const { sendRequest, status, data: loadedUserIds, error } = useHttp(
-    keycloak ? fetchUserIds : null, true
-  );
-
-  useEffect(() => {
-    if (keycloak) {
-      sendRequest();
-    }
-  }, [sendRequest, keycloak]);
+  const { status, data: loadedUserIds, error } = useAuthRequest(fetchUserIds);
 
   const createRunHandler = (event) => {
     event.preventDefault();
@@ -42,8 +26,7 @@ const AdminCreateRunForm = () => {
 
     console.log('Form submitted:', { selectedUserId, distance, duration });
 
-    // Redirect back to the AdminRunTable page after creating the run
-    history.push('/admin-run-table');
+    history.push('/manage-data/runs');
   };
 
   return (

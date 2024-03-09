@@ -1,5 +1,3 @@
-import React, { useState, useEffect, useContext } from 'react';
-
 const RUNNERS_UTIL_RESOURCE_DOMAIN = 'http://localhost:8080';
 
 export async function getAllRuns(token) {

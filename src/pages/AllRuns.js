@@ -1,33 +1,17 @@
-import { useEffect, useContext, useCallback } from 'react';
-import { KeycloakContext } from '../App';
+import React, { useCallback } from 'react';
 
 import RunList from '../components/runs/RunList';
 import LoadingSpinner from '../components/UI/LoadingSpinner';
 import NoRunsFound from '../components/runs/NoRunsFound';
-import useHttp from '../hooks/use-http';
+import useAuthRequest from '../hooks/use-http';
 import { getAllRuns } from '../lib/resource-server-api';
 
 const AllRuns = () => {
-  const { keycloak } = useContext(KeycloakContext);
+  const fetchAllRuns = useCallback(async (token) => {
+    return getAllRuns(token);
+  }, []);
 
-  const fetchAllRuns = useCallback(() => {
-    if (!keycloak) {
-      console.log('Error: No Keycloak instance');
-      return Promise.resolve([]);
-    }
-    return getAllRuns(keycloak.token);
-  }, [keycloak]);
-
-  const { sendRequest, status, data: loadedRuns, error } = useHttp(
-    keycloak ? fetchAllRuns : null,
-    true
-  );
-
-  useEffect(() => {
-    if (keycloak) {
-      sendRequest();
-    }
-  }, [sendRequest, keycloak]);
+  const { status, data: loadedRuns, error } = useAuthRequest(fetchAllRuns);
 
   if (status === 'pending') {
     return (

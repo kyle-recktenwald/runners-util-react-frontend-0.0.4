@@ -1,4 +1,5 @@
-import { useReducer, useCallback } from 'react';
+import { useReducer, useCallback, useContext, useEffect } from 'react';
+import { KeycloakContext } from '../App';
 
 function httpReducer(state, action) {
   if (action.type === 'SEND') {
@@ -36,10 +37,11 @@ function useHttp(requestFunction, startWithPending = false) {
   });
 
   const sendRequest = useCallback(
-    async function (requestData) {
+    async function (requestData, token) {
       dispatch({ type: 'SEND' });
       try {
-        const responseData = await requestFunction(requestData);
+        const headers = token ? { Authorization: `Bearer ${token}` } : {};
+        const responseData = await requestFunction(requestData, headers);
         dispatch({ type: 'SUCCESS', responseData });
       } catch (error) {
         dispatch({
@@ -57,4 +59,32 @@ function useHttp(requestFunction, startWithPending = false) {
   };
 }
 
-export default useHttp;
+const useAuthRequest = (requestFunction) => {
+  const { keycloak } = useContext(KeycloakContext);
+
+  const fetchData = useCallback(
+    (token) => {
+      if (!keycloak) {
+        console.log('Error: No Keycloak instance');
+        return Promise.resolve([]);
+      }
+      return requestFunction(token);
+    },
+    [keycloak, requestFunction]
+  );
+
+  const { sendRequest, status, data, error } = useHttp(
+    fetchData,
+    true
+  );
+
+  useEffect(() => {
+    if (keycloak) {
+      sendRequest(keycloak.token);
+    }
+  }, [sendRequest, keycloak]);
+
+  return { status, data, error };
+};
+
+export default useAuthRequest;

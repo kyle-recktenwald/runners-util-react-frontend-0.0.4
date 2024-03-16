@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import Card from '../UI/Card';
 import WideCard from '../UI/WideCard';
@@ -11,7 +11,12 @@ const AdminCreateRunForm = () => {
 
   const [selectedUserId, setSelectedUserId] = useState('');
   const [distance, setDistance] = useState('');
-  const [duration, setDuration] = useState('');
+  const [duration, setDuration] = useState({ hours: '', minutes: '', seconds: '' });
+  const [formValid, setFormValid] = useState(false); // Track form validity
+
+  const hourInputRef = useRef(null);
+  const minuteInputRef = useRef(null);
+  const secondInputRef = useRef(null);
 
   const fetchUserIds = useCallback(async (token) => {
     return getAllUserIds(token);
@@ -19,14 +24,55 @@ const AdminCreateRunForm = () => {
 
   const { status, data: loadedUserIds, error } = useAuthRequest(fetchUserIds);
 
+  useEffect(() => {
+    setFormValid(selectedUserId !== '' && distance !== '' && duration.hours !== '' && duration.minutes !== '' && duration.seconds !== '');
+  }, [selectedUserId, distance, duration]);
+
   const createRunHandler = (event) => {
     event.preventDefault();
 
+    const distanceInMeters = parseFloat(distance) * 1609.34;
+
+    const durationInMilliseconds = ((parseInt(duration.hours, 10) || 0) * 3600000) +
+      ((parseInt(duration.minutes, 10) || 0) * 60000) +
+      ((parseInt(duration.seconds, 10) || 0) * 1000);
+
     // Form Validation
 
-    console.log('Form submitted:', { selectedUserId, distance, duration });
+    console.log('Form submitted:', { selectedUserId, distance: distanceInMeters, duration: durationInMilliseconds });
 
     history.push('/manage-data/runs');
+  };
+
+  const handleDurationChange = (event, type) => {
+    let value = event.target.value;
+    value = value.replace(/\D/g, '');
+    value = value.slice(0, 2);
+    setDuration((prevDuration) => ({
+      ...prevDuration,
+      [type]: value,
+    }));
+  };
+
+  const handleDistanceKeyDown = (event) => {
+    if (event.key === 'Tab') {
+      event.preventDefault();
+      hourInputRef.current.focus();
+    }
+  };
+
+  const handleHourKeyDown = (event) => {
+    if (event.key === 'Tab') {
+      event.preventDefault();
+      minuteInputRef.current.focus();
+    }
+  };
+
+  const handleMinuteKeyDown = (event) => {
+    if (event.key === 'Tab') {
+      event.preventDefault();
+      secondInputRef.current.focus();
+    }
   };
 
   return (
@@ -61,25 +107,48 @@ const AdminCreateRunForm = () => {
                   setDistance(input);
                 }
               }}
+              onKeyDown={handleDistanceKeyDown}
+            />
+          </label>
+          <label>
+            Duration:
+            <input
+              ref={hourInputRef}
+              type="text"
+              value={duration.hours}
+              onChange={(e) => handleDurationChange(e, 'hours')}
+              maxLength="2"
+              style={{ width: '50px', marginRight: '5px' }}
+              onKeyDown={handleHourKeyDown}
+            />
+            :
+            <input
+              ref={minuteInputRef}
+              type="text"
+              value={duration.minutes}
+              onChange={(e) => handleDurationChange(e, 'minutes')}
+              maxLength="2"
+              style={{ width: '50px', marginRight: '5px', marginLeft: '5px' }}
+              onKeyDown={handleMinuteKeyDown}
+            />
+            :
+            <input
+              ref={secondInputRef}
+              type="text"
+              value={duration.seconds}
+              onChange={(e) => handleDurationChange(e, 'seconds')}
+              maxLength="2"
+              style={{ width: '50px', marginLeft: '5px' }}
               onKeyDown={(e) => {
-                // Allow only numeric and decimal characters, backspace, and delete
-                const isValidChar =
-                  /^\d$/.test(e.key) ||
-                  e.key === '.' ||
-                  e.key === 'Backspace' ||
-                  e.key === 'Delete';
+                const isValidChar = /^\d$/.test(e.key) || e.key === 'Backspace' || e.key === 'Delete';
                 if (!isValidChar) {
                   e.preventDefault();
                 }
               }}
             />
           </label>
-          <label>
-            Duration (milliseconds):
-            <input type="number" value={duration} onChange={(e) => setDuration(e.target.value)} />
-          </label>
           {/* Add more form fields as needed */}
-          <button type="submit" className={classes.createButton}>
+          <button type="submit" className={classes.createButton} disabled={!formValid}>
             Create Run
           </button>
         </form>

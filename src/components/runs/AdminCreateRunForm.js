@@ -1,18 +1,23 @@
-import React, { useState, useCallback, useRef, useEffect } from 'react';
+import React, { useState, useCallback, useRef, useEffect, useContext } from 'react'; // Import useContext
 import { useHistory } from 'react-router-dom';
 import Card from '../UI/Card';
 import WideCard from '../UI/WideCard';
 import classes from './AdminCreateRunForm.module.css';
 import { getAllUserIds } from '../../lib/keycloak-server-api';
+import { getRoutesByUserId } from '../../lib/resource-server-api';
 import useAuthRequest from '../../hooks/use-http';
+import { KeycloakContext } from '../../App'; // Import KeycloakContext
 
 const AdminCreateRunForm = () => {
   const history = useHistory();
+  const { profile } = useContext(KeycloakContext); // Access profile from context
 
   const [selectedUserId, setSelectedUserId] = useState('');
+  const [selectedRouteId, setSelectedRouteId] = useState(''); // Define selectedRouteId state
   const [distance, setDistance] = useState('');
   const [duration, setDuration] = useState({ hours: '', minutes: '', seconds: '' });
-  const [formValid, setFormValid] = useState(false); // Track form validity
+  const [formValid, setFormValid] = useState(false);
+  const [userRoutes, setUserRoutes] = useState([]);
 
   const hourInputRef = useRef(null);
   const minuteInputRef = useRef(null);
@@ -20,13 +25,28 @@ const AdminCreateRunForm = () => {
 
   const fetchUserIds = useCallback(async (token) => {
     return getAllUserIds(token);
-  }, []);
+  }, [profile]);
 
-  const { status, data: loadedUserIds, error } = useAuthRequest(fetchUserIds);
+  const { status: userIdsStatus, data: loadedUserIds, error: userIdsError } = useAuthRequest(fetchUserIds);
 
   useEffect(() => {
     setFormValid(selectedUserId !== '' && distance !== '' && duration.hours !== '' && duration.minutes !== '' && duration.seconds !== '');
   }, [selectedUserId, distance, duration]);
+
+  useEffect(() => {
+    if (selectedUserId) {
+      fetchRoutes(selectedUserId);
+    }
+  }, [selectedUserId, profile]);
+
+  const fetchRoutes = async (userId) => {
+    try {
+      const routes = await getRoutesByUserId(profile.token, userId); // Use profile.token from context
+      setUserRoutes(routes);
+    } catch (error) {
+      console.error('Error fetching routes:', error);
+    }
+  };
 
   const createRunHandler = (event) => {
     event.preventDefault();
@@ -36,8 +56,6 @@ const AdminCreateRunForm = () => {
     const durationInMilliseconds = ((parseInt(duration.hours, 10) || 0) * 3600000) +
       ((parseInt(duration.minutes, 10) || 0) * 60000) +
       ((parseInt(duration.seconds, 10) || 0) * 1000);
-
-    // Form Validation
 
     console.log('Form submitted:', { selectedUserId, distance: distanceInMeters, duration: durationInMilliseconds });
 
@@ -84,7 +102,7 @@ const AdminCreateRunForm = () => {
         <form onSubmit={createRunHandler}>
           <label>
             User ID:
-            {loadedUserIds ? (
+            {userIdsStatus === 'completed' ? (
               <select value={selectedUserId} onChange={(e) => setSelectedUserId(e.target.value)}>
                 {loadedUserIds.map((userId) => (
                   <option key={userId} value={userId}>
@@ -95,6 +113,16 @@ const AdminCreateRunForm = () => {
             ) : (
               <span>Loading...</span>
             )}
+          </label>
+          <label>
+            Select Route:
+            <select value={selectedRouteId} onChange={(e) => setSelectedRouteId(e.target.value)}>
+              {userRoutes.map((route) => (
+                <option key={route.id} value={route.id}>
+                  {route.name}
+                </option>
+              ))}
+            </select>
           </label>
           <label>
             Distance (miles):
@@ -147,7 +175,6 @@ const AdminCreateRunForm = () => {
               }}
             />
           </label>
-          {/* Add more form fields as needed */}
           <button type="submit" className={classes.createButton} disabled={!formValid}>
             Create Run
           </button>

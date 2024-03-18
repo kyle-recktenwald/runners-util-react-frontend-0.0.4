@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef, useEffect, useContext } from 'react'; // Import useContext
+import React, { useState, useCallback, useRef, useEffect, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import Card from '../UI/Card';
 import WideCard from '../UI/WideCard';
@@ -6,14 +6,14 @@ import classes from './AdminCreateRunForm.module.css';
 import { getAllUserIds } from '../../lib/keycloak-server-api';
 import { getRoutesByUserId } from '../../lib/resource-server-api';
 import useAuthRequest from '../../hooks/use-http';
-import { KeycloakContext } from '../../App'; // Import KeycloakContext
+import { KeycloakContext } from '../../App';
 
 const AdminCreateRunForm = () => {
   const history = useHistory();
-  const { profile } = useContext(KeycloakContext); // Access profile from context
+  const { profile } = useContext(KeycloakContext);
 
-  const [selectedUserId, setSelectedUserId] = useState('');
-  const [selectedRouteId, setSelectedRouteId] = useState(''); // Define selectedRouteId state
+  const [selectedUserId, setSelectedUserId] = useState(''); // Set initial value here
+  const [selectedRouteId, setSelectedRouteId] = useState('');
   const [distance, setDistance] = useState('');
   const [duration, setDuration] = useState({ hours: '', minutes: '', seconds: '' });
   const [formValid, setFormValid] = useState(false);
@@ -27,27 +27,34 @@ const AdminCreateRunForm = () => {
     return getAllUserIds(token);
   }, [profile]);
 
-  const { status: userIdsStatus, data: loadedUserIds, error: userIdsError } = useAuthRequest(fetchUserIds);
+  const { status: userIdsStatus, data: loadedUserIds } = useAuthRequest(fetchUserIds);
 
   useEffect(() => {
-    setFormValid(selectedUserId !== '' && distance !== '' && duration.hours !== '' && duration.minutes !== '' && duration.seconds !== '');
-  }, [selectedUserId, distance, duration]);
+    if (loadedUserIds !== null && loadedUserIds.length > 0) {
+      setSelectedUserId(loadedUserIds[0]); // Set the first user ID as selected on page load
+    }
+  }, [loadedUserIds]);
 
   useEffect(() => {
     if (selectedUserId) {
       fetchRoutes(selectedUserId);
+      setSelectedRouteId(''); // Clear selectedRouteId when user ID changes
     }
-  }, [selectedUserId, profile]);
+  }, [selectedUserId]);
 
   const fetchRoutes = async (userId) => {
     try {
-      const routes = await getRoutesByUserId(profile.token, userId); // Use profile.token from context
+      const routes = await getRoutesByUserId(profile.token, userId);
       setUserRoutes(routes);
     } catch (error) {
       console.error('Error fetching routes:', error);
     }
   };
 
+  useEffect(() => {
+    setFormValid(selectedUserId !== '' && distance !== '' && duration.hours !== '' && duration.minutes !== '' && duration.seconds !== '');
+  }, [selectedUserId, distance, duration]);
+  
   const createRunHandler = (event) => {
     event.preventDefault();
 

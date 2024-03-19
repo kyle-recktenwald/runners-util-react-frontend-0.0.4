@@ -43,6 +43,12 @@ const AdminCreateRunForm = () => {
     }
   }, [selectedUserId]);
 
+  useEffect(() => {
+    if (userRoutes.length > 0) {
+      setSelectedRouteId(userRoutes[0].routeId);
+    }
+  }, [userRoutes]);
+
   const fetchRoutes = async (userId) => {
     try {
       const routes = await getRoutesByUserId(profile.token, userId);
@@ -55,7 +61,7 @@ const AdminCreateRunForm = () => {
   useEffect(() => {
     setFormValid(selectedUserId !== '' && distance !== '' && duration.hours !== '' && duration.minutes !== '' && duration.seconds !== '' && startDateTime !== '');
   }, [selectedUserId, distance, duration, startDateTime]);
-  
+
   useEffect(() => {
     const currentDateTime = new Date().toISOString().slice(0, 16); // Format: YYYY-MM-DDTHH:MM
     setStartDateTime(currentDateTime);
@@ -69,7 +75,6 @@ const AdminCreateRunForm = () => {
     const durationInMilliseconds = ((parseInt(duration.hours, 10) || 0) * 3600000) +
       ((parseInt(duration.minutes, 10) || 0) * 60000) +
       ((parseInt(duration.seconds, 10) || 0) * 1000);
-    
     const runData = {
       userId: selectedUserId,
       routeId: selectedRouteId,
@@ -143,7 +148,7 @@ const AdminCreateRunForm = () => {
             Select Route:
             <select value={selectedRouteId} onChange={(e) => setSelectedRouteId(e.target.value)}>
               {userRoutes.map((route) => (
-                <option key={route.id} value={route.id}>
+                <option key={route.routeId} value={route.routeId}>
                   {route.name}
                 </option>
               ))}

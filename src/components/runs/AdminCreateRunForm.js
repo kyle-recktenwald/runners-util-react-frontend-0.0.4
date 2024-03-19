@@ -12,7 +12,7 @@ const AdminCreateRunForm = () => {
   const history = useHistory();
   const { profile } = useContext(KeycloakContext);
 
-  const [selectedUserId, setSelectedUserId] = useState(''); // Set initial value here
+  const [selectedUserId, setSelectedUserId] = useState('');
   const [selectedRouteId, setSelectedRouteId] = useState('');
   const [distance, setDistance] = useState('');
   const [duration, setDuration] = useState({ hours: '', minutes: '', seconds: '' });
@@ -32,14 +32,14 @@ const AdminCreateRunForm = () => {
 
   useEffect(() => {
     if (loadedUserIds !== null && loadedUserIds.length > 0) {
-      setSelectedUserId(loadedUserIds[0]); // Set the first user ID as selected on page load
+      setSelectedUserId(loadedUserIds[0]);
     }
   }, [loadedUserIds]);
 
   useEffect(() => {
     if (selectedUserId) {
       fetchRoutes(selectedUserId);
-      setSelectedRouteId(''); // Clear selectedRouteId when user ID changes
+      setSelectedRouteId('');
     }
   }, [selectedUserId]);
 
@@ -56,6 +56,11 @@ const AdminCreateRunForm = () => {
     setFormValid(selectedUserId !== '' && distance !== '' && duration.hours !== '' && duration.minutes !== '' && duration.seconds !== '' && startDateTime !== '');
   }, [selectedUserId, distance, duration, startDateTime]);
   
+  useEffect(() => {
+    const currentDateTime = new Date().toISOString().slice(0, 16); // Format: YYYY-MM-DDTHH:MM
+    setStartDateTime(currentDateTime);
+  }, []);
+
   const createRunHandler = async (event) => {
     event.preventDefault();
 
@@ -65,22 +70,21 @@ const AdminCreateRunForm = () => {
       ((parseInt(duration.minutes, 10) || 0) * 60000) +
       ((parseInt(duration.seconds, 10) || 0) * 1000);
     
-      const runData = {
+    const runData = {
       userId: selectedUserId,
       routeId: selectedRouteId,
       distance: distanceInMeters,
       duration: durationInMilliseconds,
-      startDateTime: new Date(startDateTime).toISOString(), // Convert to ISO string
+      startDateTime: new Date(startDateTime).toISOString(),
     };
 
     try {
-      await createRun(runData, profile.token); // Call createRun function with runData and token
+      await createRun(runData, profile.token);
       console.log('Run created successfully');
       history.push('/manage-data/runs');
     } catch (error) {
       console.error('Error creating run:', error);
     }
-
   };
 
   const handleDurationChange = (event, type) => {

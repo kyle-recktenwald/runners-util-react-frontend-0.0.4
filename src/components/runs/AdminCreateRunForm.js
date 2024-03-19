@@ -4,7 +4,7 @@ import Card from '../UI/Card';
 import WideCard from '../UI/WideCard';
 import classes from './AdminCreateRunForm.module.css';
 import { getAllUserIds } from '../../lib/keycloak-server-api';
-import { getRoutesByUserId } from '../../lib/resource-server-api';
+import { getRoutesByUserId, createRun } from '../../lib/resource-server-api';
 import useAuthRequest from '../../hooks/use-http';
 import { KeycloakContext } from '../../App';
 
@@ -16,6 +16,7 @@ const AdminCreateRunForm = () => {
   const [selectedRouteId, setSelectedRouteId] = useState('');
   const [distance, setDistance] = useState('');
   const [duration, setDuration] = useState({ hours: '', minutes: '', seconds: '' });
+  const [startDateTime, setStartDateTime] = useState('');
   const [formValid, setFormValid] = useState(false);
   const [userRoutes, setUserRoutes] = useState([]);
 
@@ -52,10 +53,10 @@ const AdminCreateRunForm = () => {
   };
 
   useEffect(() => {
-    setFormValid(selectedUserId !== '' && distance !== '' && duration.hours !== '' && duration.minutes !== '' && duration.seconds !== '');
-  }, [selectedUserId, distance, duration]);
+    setFormValid(selectedUserId !== '' && distance !== '' && duration.hours !== '' && duration.minutes !== '' && duration.seconds !== '' && startDateTime !== '');
+  }, [selectedUserId, distance, duration, startDateTime]);
   
-  const createRunHandler = (event) => {
+  const createRunHandler = async (event) => {
     event.preventDefault();
 
     const distanceInMeters = parseFloat(distance) * 1609.34;
@@ -63,10 +64,23 @@ const AdminCreateRunForm = () => {
     const durationInMilliseconds = ((parseInt(duration.hours, 10) || 0) * 3600000) +
       ((parseInt(duration.minutes, 10) || 0) * 60000) +
       ((parseInt(duration.seconds, 10) || 0) * 1000);
+    
+      const runData = {
+      userId: selectedUserId,
+      routeId: selectedRouteId,
+      distance: distanceInMeters,
+      duration: durationInMilliseconds,
+      startDateTime: new Date(startDateTime).toISOString(), // Convert to ISO string
+    };
 
-    console.log('Form submitted:', { selectedUserId, distance: distanceInMeters, duration: durationInMilliseconds });
+    try {
+      await createRun(runData, profile.token); // Call createRun function with runData and token
+      console.log('Run created successfully');
+      history.push('/manage-data/runs');
+    } catch (error) {
+      console.error('Error creating run:', error);
+    }
 
-    history.push('/manage-data/runs');
   };
 
   const handleDurationChange = (event, type) => {
@@ -180,6 +194,14 @@ const AdminCreateRunForm = () => {
                   e.preventDefault();
                 }
               }}
+            />
+          </label>
+          <label>
+            Start Date and Time:
+            <input
+              type="datetime-local"
+              value={startDateTime}
+              onChange={(e) => setStartDateTime(e.target.value)}
             />
           </label>
           <button type="submit" className={classes.createButton} disabled={!formValid}>

@@ -83,17 +83,17 @@ const AdminRunTable = (props) => {
             <thead>
               <tr className={classes.tableHeader}>
                 <th className={classes.tableCell}>Actions</th>
+                <th className={classes.tableCell}>User ID</th>
                 <th className={classes.tableCell}>ID</th>
                 <th className={classes.tableCell}>Distance</th>
                 <th className={classes.tableCell}>Duration</th>
                 <th className={classes.tableCell}>Route ID</th>
+                <th className={classes.tableCell}>Start Date Time</th>
                 <th className={classes.tableCell}>Create Date</th>
                 <th className={classes.tableCell}>Update Date</th>
-                <th className={classes.tableCell}>CRUD Status</th>
-                <th className={classes.tableCell}>Start Date Time</th>
                 <th className={classes.tableCell}>Created By User ID</th>
                 <th className={classes.tableCell}>Updated By User ID</th>
-                <th className={classes.tableCell}>Run Owner User ID</th>
+                <th className={classes.tableCell}>Is Deleted</th>
               </tr>
             </thead>
             <tbody>
@@ -104,17 +104,17 @@ const AdminRunTable = (props) => {
                     <button className={classes.editButton}>Edit</button>
                     <button className={classes.deleteButton}>Delete</button>
                   </td>
+                  <td className={classes.tableCell}>{run.userId}</td>
                   <td className={classes.tableCell}>{run.id}</td>
                   <td className={classes.tableCell}>{yardsToMiles(run.distance)}</td>
                   <td className={classes.tableCell}>{formatDuration(run.duration)}</td>
                   <td className={classes.tableCell}>{run.routeId}</td>
+                  <td className={classes.tableCell}>{formatTimestamp(run.startDateTime)}</td>
                   <td className={classes.tableCell}>{formatTimestamp(run.createDate)}</td>
                   <td className={classes.tableCell}>{formatTimestamp(run.updateDate)}</td>
-                  <td className={classes.tableCell}>{run.crudStatus}</td>
-                  <td className={classes.tableCell}>{formatTimestamp(run.startDateTime)}</td>
                   <td className={classes.tableCell}>{run.createdByUserId}</td>
                   <td className={classes.tableCell}>{run.updatedByUserId}</td>
-                  <td className={classes.tableCell}>{run.userId}</td>
+                  <td className={classes.tableCell}>{run.isDeleted}</td>
                 </tr>
               ))}
             </tbody>

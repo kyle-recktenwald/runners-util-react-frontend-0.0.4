@@ -27,7 +27,7 @@
   }
   
   .createButton {
-    background-color: #4caf50;
+    background-color: #4caf50; /* Default color when button is enabled */
     color: white;
     padding: 10px;
     border: none;
@@ -35,6 +35,11 @@
     cursor: pointer;
   }
   
-  .createButton:hover {
-    background-color: #45a049;
+  .createButton:disabled {
+    background-color: #cccccc; /* Color when button is disabled */
+    cursor: not-allowed; /* Change cursor to indicate that the button is disabled */
+  }
+  
+  .createButton:hover:not(:disabled) {
+    background-color: #45a049; /* Hover color when button is enabled */
   }

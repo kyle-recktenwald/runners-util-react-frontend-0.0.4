@@ -75,13 +75,14 @@ export async function getRunById(runId) {
   return loadedRun;
 }
 
-export async function createRun(runData) {
-  const response = await fetch(`${RUNNERS_UTIL_RESOURCE_DOMAIN}/runs`, {
+export async function createRun(runData, token) {
+  const response = await fetch(`${RUNNERS_UTIL_RESOURCE_DOMAIN}/api/runs`, {
     method: 'POST',
-    body: JSON.stringify(runData),
     headers: {
       'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
     },
+    body: JSON.stringify(runData),
   });
   const data = await response.json();
 

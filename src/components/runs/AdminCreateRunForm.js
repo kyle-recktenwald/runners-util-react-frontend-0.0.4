@@ -59,7 +59,8 @@ const AdminCreateRunForm = () => {
   };
 
   useEffect(() => {
-    setFormValid(selectedUserId !== '' && distance !== '' && duration.hours !== '' && duration.minutes !== '' && duration.seconds !== '' && startDateTime !== '');
+    setFormValid(selectedUserId !== '' && distance !== '' && duration.hours !== '' 
+    && duration.minutes !== '' && duration.seconds !== '' && startDateTime !== '');
   }, [selectedUserId, distance, duration, startDateTime]);
 
   useEffect(() => {
@@ -88,7 +89,7 @@ const AdminCreateRunForm = () => {
     try {
       await createRun(runData, profile.token);
       console.log('Run created successfully');
-      history.push('/manage-data/runs');
+      history.push('/admin/manage-data/runs');
     } catch (error) {
       console.error('Error creating run:', error);
     }

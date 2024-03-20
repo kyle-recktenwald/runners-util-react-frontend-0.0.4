@@ -1,7 +1,7 @@
 const RUNNERS_UTIL_RESOURCE_DOMAIN = 'http://localhost:8080';
 
 export async function getAllRuns(token) {
-  const response = await fetch(`${RUNNERS_UTIL_RESOURCE_DOMAIN}/api/admin/test-runs`, {
+  const response = await fetch(`${RUNNERS_UTIL_RESOURCE_DOMAIN}/api/runs`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

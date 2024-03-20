@@ -19,7 +19,7 @@ const AdminCreateRunForm = () => {
   const [startDateTime, setStartDateTime] = useState('');
   const [formValid, setFormValid] = useState(false);
   const [userRoutes, setUserRoutes] = useState([]);
-
+  
   const hourInputRef = useRef(null);
   const minuteInputRef = useRef(null);
   const secondInputRef = useRef(null);
@@ -63,7 +63,7 @@ const AdminCreateRunForm = () => {
   }, [selectedUserId, distance, duration, startDateTime]);
 
   useEffect(() => {
-    const currentDateTime = new Date().toISOString().slice(0, 16); // Format: YYYY-MM-DDTHH:MM
+    const currentDateTime = new Date().toISOString().slice(0, 16);
     setStartDateTime(currentDateTime);
   }, []);
 
@@ -75,12 +75,14 @@ const AdminCreateRunForm = () => {
     const durationInMilliseconds = ((parseInt(duration.hours, 10) || 0) * 3600000) +
       ((parseInt(duration.minutes, 10) || 0) * 60000) +
       ((parseInt(duration.seconds, 10) || 0) * 1000);
-    const runData = {
+        
+      const runData = {
       userId: selectedUserId,
       routeId: selectedRouteId,
       distance: distanceInMeters,
       duration: durationInMilliseconds,
       startDateTime: new Date(startDateTime).toISOString(),
+      createdByUserId: profile.id,
     };
 
     try {

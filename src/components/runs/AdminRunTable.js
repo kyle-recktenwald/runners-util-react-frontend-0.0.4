@@ -27,8 +27,8 @@ function formatTimestamp(timestamp) {
   });
 }
 
-function yardsToMiles(yards) {
-  const miles = yards / 1760; // Convert yards to miles
+function metersToMiles(meters) {
+  const miles = meters / 1609.34; // Convert meters to miles
   return miles.toFixed(2); // Return the result rounded to 2 decimal places
 }
 
@@ -106,7 +106,7 @@ const AdminRunTable = (props) => {
                   <td className={classes.tableCell}>{formatTimestamp(run.startDateTime)}</td>
                   <td className={classes.tableCell}>{run.userId}</td>
                   <td className={classes.tableCell}>{run.runId}</td>
-                  <td className={classes.tableCell}>{yardsToMiles(run.distance)}</td>
+                  <td className={classes.tableCell}>{metersToMiles(run.distance)}</td>
                   <td className={classes.tableCell}>{formatDuration(run.duration)}</td>
                   <td className={classes.tableCell}>{run.routeId}</td>
                   <td className={classes.tableCell}>{formatTimestamp(run.createDate)}</td>

@@ -17,6 +17,7 @@ const AdminCreateRunForm = () => {
   const [distance, setDistance] = useState('');
   const [duration, setDuration] = useState({ hours: '', minutes: '', seconds: '' });
   const [startDateTime, setStartDateTime] = useState('');
+  const [userTimeZone, setUserTimeZone] = useState('');
   const [formValid, setFormValid] = useState(false);
   const [userRoutes, setUserRoutes] = useState([]);
   
@@ -63,10 +64,56 @@ const AdminCreateRunForm = () => {
     && duration.minutes !== '' && duration.seconds !== '' && startDateTime !== '');
   }, [selectedUserId, distance, duration, startDateTime]);
 
-  useEffect(() => {
-    const currentDateTime = new Date().toISOString().slice(0, 16);
-    setStartDateTime(currentDateTime);
-  }, []);
+useEffect(() => {
+  const getUserTimeZone = async () => {
+    try {
+      const timeZone = await Intl.DateTimeFormat().resolvedOptions().timeZone;
+      setUserTimeZone(timeZone);
+    } catch (error) {
+      console.error('Error retrieving time zone:', error);
+      // Handle error: set a default time zone or retry obtaining the time zone
+    }
+  };
+
+  getUserTimeZone();
+}, []); // Empty dependency array ensures the effect runs only once after the component mounts
+
+useEffect(() => {
+  const getCurrentDateTime = () => {
+    if (userTimeZone) {
+      setStartDateTime(getCurrentLocalISOString(userTimeZone));
+    }
+  };
+  getCurrentDateTime();
+}, [userTimeZone]); // Dependency added to update when userTimeZone changes
+
+function getCurrentLocalISOString(userTimeZone) {
+  const now = new Date();
+  const options = { 
+    timeZone: userTimeZone,
+    year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit', hour12: false
+  };
+  const localISOString = now.toLocaleString('en-US', options)
+    .replace(',','')
+    .replace(/\//g, '-')
+    .replace(' ', 'T');
+
+    const parts = localISOString.split('T');
+    const datePart = parts[0];
+    const timePart = parts[1];
+
+    const dateComponents = datePart.split('-');
+    const month = dateComponents[0];
+    const day = dateComponents[1];
+    const year = dateComponents[2];
+
+    const formattedDate = `${year}-${month}-${day}`;
+
+    const outputDateTime = `${formattedDate}T${timePart}`;
+  
+    return outputDateTime;
+}
 
   const createRunHandler = async (event) => {
     event.preventDefault();

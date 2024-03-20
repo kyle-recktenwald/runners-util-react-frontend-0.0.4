@@ -21,9 +21,7 @@ const AdminCreateRunForm = () => {
   const [formValid, setFormValid] = useState(false);
   const [userRoutes, setUserRoutes] = useState([]);
 
-  const hourInputRef = useRef(null);
-  const minuteInputRef = useRef(null);
-  const secondInputRef = useRef(null);
+  const formRef = useRef(null);
 
   const fetchUserIds = useCallback(async (token) => {
     return getAllUserIds(token);
@@ -151,34 +149,13 @@ const AdminCreateRunForm = () => {
     }));
   };
 
-  const handleDistanceKeyDown = (event) => {
-    if (event.key === 'Tab') {
-      event.preventDefault();
-      hourInputRef.current.focus();
-    }
-  };
-
-  const handleHourKeyDown = (event) => {
-    if (event.key === 'Tab') {
-      event.preventDefault();
-      minuteInputRef.current.focus();
-    }
-  };
-
-  const handleMinuteKeyDown = (event) => {
-    if (event.key === 'Tab') {
-      event.preventDefault();
-      secondInputRef.current.focus();
-    }
-  };
-
   return (
     <div className={classes.container}>
       <Card>
         <h1 className={classes.h1}>Create Run</h1>
       </Card>
       <WideCard>
-        <form onSubmit={createRunHandler}>
+        <form ref={formRef} onSubmit={createRunHandler}>
           <label>
             User ID:
             {userIdsStatus === 'completed' ? (
@@ -214,44 +191,32 @@ const AdminCreateRunForm = () => {
                   setDistance(input);
                 }
               }}
-              onKeyDown={handleDistanceKeyDown}
             />
           </label>
           <label>
             Duration:
             <input
-              ref={hourInputRef}
               type="text"
               value={duration.hours}
               onChange={(e) => handleDurationChange(e, 'hours')}
               maxLength="2"
               style={{ width: '50px', marginRight: '5px' }}
-              onKeyDown={handleHourKeyDown}
             />
             :
             <input
-              ref={minuteInputRef}
               type="text"
               value={duration.minutes}
               onChange={(e) => handleDurationChange(e, 'minutes')}
               maxLength="2"
               style={{ width: '50px', marginRight: '5px', marginLeft: '5px' }}
-              onKeyDown={handleMinuteKeyDown}
             />
             :
             <input
-              ref={secondInputRef}
               type="text"
               value={duration.seconds}
               onChange={(e) => handleDurationChange(e, 'seconds')}
               maxLength="2"
               style={{ width: '50px', marginLeft: '5px' }}
-              onKeyDown={(e) => {
-                const isValidChar = /^\d$/.test(e.key) || e.key === 'Backspace' || e.key === 'Delete';
-                if (!isValidChar) {
-                  e.preventDefault();
-                }
-              }}
             />
           </label>
           <label>

@@ -71,12 +71,11 @@ const AdminCreateRunForm = () => {
         setUserTimeZone(timeZone);
       } catch (error) {
         console.error('Error retrieving time zone:', error);
-        // Handle error: set a default time zone or retry obtaining the time zone
       }
     };
 
     getUserTimeZone();
-  }, []); // Empty dependency array ensures the effect runs only once after the component mounts
+  }, []);
 
   useEffect(() => {
     const getCurrentDateTime = () => {
@@ -85,7 +84,7 @@ const AdminCreateRunForm = () => {
       }
     };
     getCurrentDateTime();
-  }, [userTimeZone]); // Dependency added to update when userTimeZone changes
+  }, [userTimeZone]);
 
   function getCurrentLocalISOString(userTimeZone) {
     const now = new Date();

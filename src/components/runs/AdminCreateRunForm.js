@@ -20,7 +20,7 @@ const AdminCreateRunForm = () => {
   const [userTimeZone, setUserTimeZone] = useState('');
   const [formValid, setFormValid] = useState(false);
   const [userRoutes, setUserRoutes] = useState([]);
-  
+
   const hourInputRef = useRef(null);
   const minuteInputRef = useRef(null);
   const secondInputRef = useRef(null);
@@ -60,44 +60,44 @@ const AdminCreateRunForm = () => {
   };
 
   useEffect(() => {
-    setFormValid(selectedUserId !== '' && distance !== '' && duration.hours !== '' 
-    && duration.minutes !== '' && duration.seconds !== '' && startDateTime !== '');
+    setFormValid(selectedUserId !== '' && distance !== '' && duration.hours !== ''
+      && duration.minutes !== '' && duration.seconds !== '' && startDateTime !== '');
   }, [selectedUserId, distance, duration, startDateTime]);
 
-useEffect(() => {
-  const getUserTimeZone = async () => {
-    try {
-      const timeZone = await Intl.DateTimeFormat().resolvedOptions().timeZone;
-      setUserTimeZone(timeZone);
-    } catch (error) {
-      console.error('Error retrieving time zone:', error);
-      // Handle error: set a default time zone or retry obtaining the time zone
-    }
-  };
+  useEffect(() => {
+    const getUserTimeZone = async () => {
+      try {
+        const timeZone = await Intl.DateTimeFormat().resolvedOptions().timeZone;
+        setUserTimeZone(timeZone);
+      } catch (error) {
+        console.error('Error retrieving time zone:', error);
+        // Handle error: set a default time zone or retry obtaining the time zone
+      }
+    };
 
-  getUserTimeZone();
-}, []); // Empty dependency array ensures the effect runs only once after the component mounts
+    getUserTimeZone();
+  }, []); // Empty dependency array ensures the effect runs only once after the component mounts
 
-useEffect(() => {
-  const getCurrentDateTime = () => {
-    if (userTimeZone) {
-      setStartDateTime(getCurrentLocalISOString(userTimeZone));
-    }
-  };
-  getCurrentDateTime();
-}, [userTimeZone]); // Dependency added to update when userTimeZone changes
+  useEffect(() => {
+    const getCurrentDateTime = () => {
+      if (userTimeZone) {
+        setStartDateTime(getCurrentLocalISOString(userTimeZone));
+      }
+    };
+    getCurrentDateTime();
+  }, [userTimeZone]); // Dependency added to update when userTimeZone changes
 
-function getCurrentLocalISOString(userTimeZone) {
-  const now = new Date();
-  const options = { 
-    timeZone: userTimeZone,
-    year: 'numeric', month: '2-digit', day: '2-digit',
-    hour: '2-digit', minute: '2-digit', hour12: false
-  };
-  const localISOString = now.toLocaleString('en-US', options)
-    .replace(',','')
-    .replace(/\//g, '-')
-    .replace(' ', 'T');
+  function getCurrentLocalISOString(userTimeZone) {
+    const now = new Date();
+    const options = {
+      timeZone: userTimeZone,
+      year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit', hour12: false
+    };
+    const localISOString = now.toLocaleString('en-US', options)
+      .replace(',', '')
+      .replace(/\//g, '-')
+      .replace(' ', 'T');
 
     const parts = localISOString.split('T');
     const datePart = parts[0];
@@ -111,9 +111,9 @@ function getCurrentLocalISOString(userTimeZone) {
     const formattedDate = `${year}-${month}-${day}`;
 
     const outputDateTime = `${formattedDate}T${timePart}`;
-  
+
     return outputDateTime;
-}
+  }
 
   const createRunHandler = async (event) => {
     event.preventDefault();
@@ -123,8 +123,8 @@ function getCurrentLocalISOString(userTimeZone) {
     const durationInMilliseconds = ((parseInt(duration.hours, 10) || 0) * 3600000) +
       ((parseInt(duration.minutes, 10) || 0) * 60000) +
       ((parseInt(duration.seconds, 10) || 0) * 1000);
-        
-      const runData = {
+
+    const runData = {
       userId: selectedUserId,
       routeId: selectedRouteId,
       distance: distanceInMeters,

@@ -15,6 +15,9 @@ const sortRuns = (runs, ascending) => {
 };
 
 function formatTimestamp(timestamp) {
+  if (!timestamp) {
+    return "null";
+  }
   return new Date(timestamp).toLocaleString('en-US', {
     year: 'numeric',
     month: '2-digit',

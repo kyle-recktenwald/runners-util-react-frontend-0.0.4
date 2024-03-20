@@ -114,9 +114,9 @@ const AdminRunTable = (props) => {
                   <td className={classes.tableCell}>{run.routeId}</td>
                   <td className={classes.tableCell}>{run.createdByUserId}</td>
                   <td className={classes.tableCell}>{formatTimestamp(run.createDate)}</td>
-                  <td className={classes.tableCell}>{run.updatedByUserId}</td>
+                  <td className={classes.tableCell}>{run.updatedByUserId ? run.updatedByUserId : "null"}</td>
                   <td className={classes.tableCell}>{formatTimestamp(run.updateDate)}</td>
-                  <td className={classes.tableCell}>{run.isDeleted}</td>
+                  <td className={classes.tableCell}>{run.isDeleted ? "true" : "false"}</td>
                 </tr>
               ))}
             </tbody>

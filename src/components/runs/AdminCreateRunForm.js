@@ -7,6 +7,7 @@ import { getAllUserIds } from '../../lib/keycloak-server-api';
 import { getRoutesByUserId, createRun } from '../../lib/resource-server-api';
 import useAuthRequest from '../../hooks/use-http';
 import { KeycloakContext } from '../../App';
+import SelectUserId from '../form-fields/SelectUserId';
 
 const AdminCreateRunForm = () => {
   const history = useHistory();
@@ -149,6 +150,10 @@ const AdminCreateRunForm = () => {
     }));
   };
 
+  const handleUserIdChange = (event) => {
+    setSelectedUserId(event.target.value);
+  };
+
   return (
     <div className={classes.container}>
       <Card>
@@ -156,20 +161,12 @@ const AdminCreateRunForm = () => {
       </Card>
       <WideCard>
         <form ref={formRef} onSubmit={createRunHandler}>
-          <label>
-            User ID:
-            {userIdsStatus === 'completed' ? (
-              <select value={selectedUserId} onChange={(e) => setSelectedUserId(e.target.value)}>
-                {loadedUserIds.map((userId) => (
-                  <option key={userId} value={userId}>
-                    {userId}
-                  </option>
-                ))}
-              </select>
-            ) : (
-              <span>Loading...</span>
-            )}
-          </label>
+          <SelectUserId
+            selectedUserId={selectedUserId}
+            loadedUserIds={loadedUserIds}
+            onChange={handleUserIdChange}
+            requestStatus={userIdsStatus}
+          />
           <label>
             Select Route:
             <select value={selectedRouteId} onChange={(e) => setSelectedRouteId(e.target.value)}>

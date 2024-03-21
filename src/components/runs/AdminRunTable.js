@@ -3,6 +3,7 @@ import Card from '../UI/Card';
 import WideCard from '../UI/WideCard';
 import { NavLink, useHistory, useLocation } from 'react-router-dom';
 import { Fragment } from 'react';
+import {formatTimestamp, convertMetersToMiles, formatDuration} from '../util/FormatUtils'
 
 const sortRuns = (runs, ascending) => {
   return runs.sort((runA, runB) => {
@@ -13,39 +14,6 @@ const sortRuns = (runs, ascending) => {
     }
   });
 };
-
-function formatTimestamp(timestamp) {
-  if (!timestamp) {
-    return "null";
-  }
-  return new Date(timestamp).toLocaleString('en-US', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: true,
-    timeZoneName: 'short'
-  });
-}
-
-function metersToMiles(meters) {
-  const miles = meters / 1609.34; // Convert meters to miles
-  return miles.toFixed(2); // Return the result rounded to 2 decimal places
-}
-
-function formatDuration(milliseconds) {
-  const seconds = Math.floor((milliseconds / 1000) % 60);
-  const minutes = Math.floor((milliseconds / (1000 * 60)) % 60);
-  const hours = Math.floor((milliseconds / (1000 * 60 * 60)) % 24);
-
-  const formattedHours = hours < 10 ? `0${hours}` : hours;
-  const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
-  const formattedSeconds = seconds < 10 ? `0${seconds}` : seconds;
-
-  return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
-}
 
 const AdminRunTable = (props) => {
   const history = useHistory();
@@ -109,7 +77,7 @@ const AdminRunTable = (props) => {
                   <td className={classes.tableCell}>{formatTimestamp(run.startDateTime)}</td>
                   <td className={classes.tableCell}>{run.userId}</td>
                   <td className={classes.tableCell}>{run.runId}</td>
-                  <td className={classes.tableCell}>{metersToMiles(run.distance)}</td>
+                  <td className={classes.tableCell}>{convertMetersToMiles(run.distance)}</td>
                   <td className={classes.tableCell}>{formatDuration(run.duration)}</td>
                   <td className={classes.tableCell}>{run.routeId}</td>
                   <td className={classes.tableCell}>{run.createdByUserId}</td>

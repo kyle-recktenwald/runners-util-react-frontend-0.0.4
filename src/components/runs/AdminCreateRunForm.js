@@ -8,6 +8,7 @@ import { getRoutesByUserId, createRun } from '../../lib/resource-server-api';
 import useAuthRequest from '../../hooks/use-http';
 import { KeycloakContext } from '../../App';
 import SelectUserId from '../form-fields/SelectUserId';
+import { getCurrentLocalISOString, convertMilesToMeters, convertDurationToMilliseconds } from '../util/FormatUtils';
 
 const AdminCreateRunForm = () => {
   const history = useHistory();
@@ -85,48 +86,14 @@ const AdminCreateRunForm = () => {
     getCurrentDateTime();
   }, [userTimeZone]);
 
-  function getCurrentLocalISOString(userTimeZone) {
-    const now = new Date();
-    const options = {
-      timeZone: userTimeZone,
-      year: 'numeric', month: '2-digit', day: '2-digit',
-      hour: '2-digit', minute: '2-digit', hour12: false
-    };
-    const localISOString = now.toLocaleString('en-US', options)
-      .replace(',', '')
-      .replace(/\//g, '-')
-      .replace(' ', 'T');
-
-    const parts = localISOString.split('T');
-    const datePart = parts[0];
-    const timePart = parts[1];
-
-    const dateComponents = datePart.split('-');
-    const month = dateComponents[0];
-    const day = dateComponents[1];
-    const year = dateComponents[2];
-
-    const formattedDate = `${year}-${month}-${day}`;
-
-    const outputDateTime = `${formattedDate}T${timePart}`;
-
-    return outputDateTime;
-  }
-
   const createRunHandler = async (event) => {
     event.preventDefault();
-
-    const distanceInMeters = parseFloat(distance) * 1609.34;
-
-    const durationInMilliseconds = ((parseInt(duration.hours, 10) || 0) * 3600000) +
-      ((parseInt(duration.minutes, 10) || 0) * 60000) +
-      ((parseInt(duration.seconds, 10) || 0) * 1000);
 
     const runData = {
       userId: selectedUserId,
       routeId: selectedRouteId,
-      distance: distanceInMeters,
-      duration: durationInMilliseconds,
+      distance: convertMilesToMeters(distance),
+      duration: convertDurationToMilliseconds(duration),
       startDateTime: new Date(startDateTime).toISOString(),
       createdByUserId: profile.id,
     };

@@ -1,4 +1,4 @@
-const KEYCLOAK_DOMAIN = 'http://localhost:8180';
+const KEYCLOAK_DOMAIN = 'http://auth-service:8180';
 const KEYCLOAK_REALM = 'runnersutilapp';
 
 /**

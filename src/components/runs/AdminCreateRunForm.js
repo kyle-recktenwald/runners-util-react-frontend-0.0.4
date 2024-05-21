@@ -9,10 +9,12 @@ import useAuthRequest from '../../hooks/use-http';
 import { KeycloakContext } from '../../App';
 import SelectUserId from '../form-fields/SelectUserId';
 import { getCurrentLocalISOString, convertMilesToMeters, convertDurationToMilliseconds } from '../util/FormatUtils';
+import useUserData from '../../hooks/use-user-data'; // Importing the custom hook
 
 const AdminCreateRunForm = () => {
   const history = useHistory();
   const { profile } = useContext(KeycloakContext);
+  const { userIds, userRoutes, loading } = useUserData(profile); 
 
   const [selectedUserId, setSelectedUserId] = useState('');
   const [selectedRouteId, setSelectedRouteId] = useState('');
@@ -21,7 +23,6 @@ const AdminCreateRunForm = () => {
   const [startDateTime, setStartDateTime] = useState('');
   const [userTimeZone, setUserTimeZone] = useState('');
   const [formValid, setFormValid] = useState(false);
-  const [userRoutes, setUserRoutes] = useState([]);
 
   const formRef = useRef(null);
 
@@ -32,32 +33,16 @@ const AdminCreateRunForm = () => {
   const { status: userIdsStatus, data: loadedUserIds } = useAuthRequest(fetchUserIds);
 
   useEffect(() => {
-    if (loadedUserIds !== null && loadedUserIds.length > 0) {
-      setSelectedUserId(loadedUserIds[0]);
+    if (!loading && userIds.length > 0) {
+      setSelectedUserId(userIds[0]);
     }
-  }, [loadedUserIds]);
+  }, [loading, userIds]);
 
   useEffect(() => {
-    if (selectedUserId) {
-      fetchRoutes(selectedUserId);
-      setSelectedRouteId('');
-    }
-  }, [selectedUserId]);
-
-  useEffect(() => {
-    if (userRoutes.length > 0) {
+    if (!loading && selectedUserId && userRoutes.length > 0) {
       setSelectedRouteId(userRoutes[0].routeId);
     }
-  }, [userRoutes]);
-
-  const fetchRoutes = async (userId) => {
-    try {
-      const routes = await getRoutesByUserId(profile.token, userId);
-      setUserRoutes(routes);
-    } catch (error) {
-      console.error('Error fetching routes:', error);
-    }
-  };
+  }, [loading, selectedUserId, userRoutes]);
 
   useEffect(() => {
     setFormValid(selectedUserId !== '' && distance !== '' && duration.hours !== ''

@@ -22,7 +22,7 @@ function App() {
 
   useEffect(() => {
     const keycloakInstance = new Keycloak({
-      url: 'http://localhost:8180',
+      url: 'http://auth-service:8180',
         realm: 'runnersutilapp',
         clientId: 'runner-utils-app-client',
     });

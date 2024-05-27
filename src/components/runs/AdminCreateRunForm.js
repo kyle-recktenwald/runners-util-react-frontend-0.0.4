@@ -122,6 +122,7 @@ const AdminCreateRunForm = () => {
           <label>
             Select Route:
             <select value={selectedRouteId} onChange={(e) => setSelectedRouteId(e.target.value)}>
+              <option value="">-- No Route Selected --</option>
               {userRoutes.map((route) => (
                 <option key={route.routeId} value={route.routeId}>
                   {route.name}

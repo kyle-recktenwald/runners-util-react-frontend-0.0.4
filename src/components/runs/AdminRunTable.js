@@ -79,12 +79,12 @@ const AdminRunTable = (props) => {
                   <td className={classes.tableCell}>{run.runId}</td>
                   <td className={classes.tableCell}>{convertMetersToMiles(run.distance)}</td>
                   <td className={classes.tableCell}>{formatDuration(run.duration)}</td>
-                  <td className={classes.tableCell}>{run.routeId}</td>
-                  <td className={classes.tableCell}>{run.createdByUserId}</td>
-                  <td className={classes.tableCell}>{formatTimestamp(run.createDate)}</td>
-                  <td className={classes.tableCell}>{run.updatedByUserId ? run.updatedByUserId : "null"}</td>
-                  <td className={classes.tableCell}>{formatTimestamp(run.updateDate)}</td>
-                  <td className={classes.tableCell}>{run.isDeleted ? "true" : "false"}</td>
+                  <td className={classes.tableCell}>{run.route ? run.route.routeId : "null"}</td>
+                  <td className={classes.tableCell}>{run.crudEntityInfo.createdBy}</td>
+                  <td className={classes.tableCell}>{formatTimestamp(run.crudEntityInfo.createDate)}</td>
+                  <td className={classes.tableCell}>{run.crudEntityInfo.updatedBy ? run.crudEntityInfo.updatedBy : "null"}</td>
+                  <td className={classes.tableCell}>{formatTimestamp(run.crudEntityInfo.updateDate)}</td>
+                  <td className={classes.tableCell}>{run.crudEntityInfo.isDeleted ? "true" : "false"}</td>
                 </tr>
               ))}
             </tbody>

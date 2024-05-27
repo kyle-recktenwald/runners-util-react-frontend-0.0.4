@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getAllUserIds } from '../lib/keycloak-server-api';
-import { getRoutesByUserId } from '../lib/resource-server-api' // Assuming you have an API file
+import { getRoutesByUserId } from '../lib/resource-server-api'
 
 const useUserData = (profile) => {
   const [userIds, setUserIds] = useState([]);
@@ -11,11 +11,9 @@ const useUserData = (profile) => {
     const fetchUserData = async () => {
       setLoading(true);
       try {
-        // Fetch user IDs
         const userIdsData = await getAllUserIds(profile.token);
         setUserIds(userIdsData);
 
-        // Fetch routes for the first user ID
         if (userIdsData.length > 0) {
           const routesData = await getRoutesByUserId(profile.token, userIdsData[0]);
           setRoutes(routesData);
@@ -31,7 +29,7 @@ const useUserData = (profile) => {
     }
   }, [profile]);
 
-  return { userIds, routes: userRoutes, loading };
+  return { userIds, userRoutes, loading };
 };
 
 export default useUserData;

@@ -45,8 +45,8 @@ const AdminCreateRunForm = () => {
   }, [loading, selectedUserId, userRoutes]);
 
   useEffect(() => {
-    setFormValid(selectedUserId !== '' && distance !== '' && duration.hours !== ''
-      && duration.minutes !== '' && duration.seconds !== '' && startDateTime !== '');
+    setFormValid(selectedUserId !== '' && distance !== '' && duration.seconds !== '' 
+    && startDateTime !== '');
   }, [selectedUserId, distance, duration, startDateTime]);
 
   useEffect(() => {

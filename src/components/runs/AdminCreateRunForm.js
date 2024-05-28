@@ -9,12 +9,14 @@ import useAuthRequest from '../../hooks/use-http';
 import { KeycloakContext } from '../../App';
 import SelectUserId from '../form-fields/SelectUserId';
 import { getCurrentLocalISOString, convertMilesToMeters, convertDurationToMilliseconds } from '../util/FormatUtils';
-import useUserData from '../../hooks/use-user-data'; // Importing the custom hook
 
 const AdminCreateRunForm = () => {
   const history = useHistory();
   const { profile } = useContext(KeycloakContext);
-  const { userIds, userRoutes, loading } = useUserData(profile); 
+
+  const[userIds, setUserIds] = useState([]);
+  const[userRoutes, setUserRoutes] = useState([]);
+  const[loading, setLoading] = useState(true);
 
   const [selectedUserId, setSelectedUserId] = useState('');
   const [selectedRouteId, setSelectedRouteId] = useState('');
@@ -32,6 +34,28 @@ const AdminCreateRunForm = () => {
 
   const { status: userIdsStatus, data: loadedUserIds } = useAuthRequest(fetchUserIds);
 
+  useEffect(() => {
+    const fetchUserData = async () => {
+      setLoading(true);
+      try {
+        const userIdsData = await getAllUserIds(profile.token);
+        setUserIds(userIdsData);
+
+        if (userIdsData.length > 0) {
+          const routesData = await getRoutesByUserId(profile.token, userIdsData[0]);
+          setUserRoutes(routesData);
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+      setLoading(false);
+    };
+
+    if (profile) {
+      fetchUserData();
+    }
+  }, [profile]);
+  
   useEffect(() => {
     if (!loading && userIds.length > 0) {
       setSelectedUserId(userIds[0]);

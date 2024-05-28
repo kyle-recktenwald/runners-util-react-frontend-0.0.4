@@ -4,7 +4,7 @@ import Card from '../UI/Card';
 import WideCard from '../UI/WideCard';
 import classes from './AdminCreateRunForm.module.css';
 import { getAllUserIds } from '../../lib/keycloak-server-api';
-import { getRoutesByUserId, createRun } from '../../lib/resource-server-api';
+import { getRoutesByUserId, createRun, getRouteById } from '../../lib/resource-server-api';
 import useAuthRequest from '../../hooks/use-http';
 import { KeycloakContext } from '../../App';
 import SelectUserId from '../form-fields/SelectUserId';
@@ -138,6 +138,24 @@ const AdminCreateRunForm = () => {
     }
   };
 
+  const handleRouteChange = async (event) => {
+    event.preventDefault();
+    const selectedRouteId = event.target.value;
+    setSelectedRouteId(selectedRouteId);
+    let route = null;
+    if(selectedRouteId){
+      try {
+        route = await getRouteById(profile.token, selectedRouteId);
+      } catch (error) {
+        console.error('Error fetching user routes:', error);
+      }
+    }
+    
+    if(route && route.distance){
+      setDistance(route.distance)
+    }
+  };
+
   return (
     <div className={classes.container}>
       <Card>
@@ -153,7 +171,7 @@ const AdminCreateRunForm = () => {
           />
           <label>
             Select Route:
-            <select value={selectedRouteId} onChange={(e) => setSelectedRouteId(e.target.value)}>
+            <select value={selectedRouteId} onChange={handleRouteChange}>
               <option value="">-- No Route Selected --</option>
               {userRoutes.map((route) => (
                 <option key={route.routeId} value={route.routeId}>

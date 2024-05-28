@@ -42,7 +42,7 @@ const AdminCreateRunForm = () => {
         setUserIds(userIdsData);
 
         if (userIdsData.length > 0) {
-          const routesData = await getRoutesByUserId(profile.token, userIdsData[0]);
+          const routesData = await getRoutesByUserId(profile.token, selectedUserId);
           setUserRoutes(routesData);
         }
       } catch (error) {
@@ -126,8 +126,16 @@ const AdminCreateRunForm = () => {
     }));
   };
 
-  const handleUserIdChange = (event) => {
-    setSelectedUserId(event.target.value);
+  const handleUserIdChange = async (event) => {
+    event.preventDefault();
+    const newUserId = event.target.value;
+    setSelectedUserId(newUserId);
+    try {
+      const routes = await getRoutesByUserId(profile.token, newUserId);
+      setUserRoutes(routes);
+    } catch (error) {
+      console.error('Error fetching user routes:', error);
+    }
   };
 
   return (

@@ -14,9 +14,9 @@ const AdminCreateRunForm = () => {
   const history = useHistory();
   const { profile } = useContext(KeycloakContext);
 
-  const[userIds, setUserIds] = useState([]);
-  const[userRoutes, setUserRoutes] = useState([]);
-  const[loading, setLoading] = useState(true);
+  const [userIds, setUserIds] = useState([]);
+  const [userRoutes, setUserRoutes] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const [selectedUserId, setSelectedUserId] = useState('');
   const [selectedRouteId, setSelectedRouteId] = useState('');
@@ -35,15 +35,13 @@ const AdminCreateRunForm = () => {
   const { status: userIdsStatus, data: loadedUserIds } = useAuthRequest(fetchUserIds);
 
   useEffect(() => {
-    const fetchUserData = async () => {
+    const fetchUserIds = async () => {
       setLoading(true);
       try {
         const userIdsData = await getAllUserIds(profile.token);
         setUserIds(userIdsData);
-
         if (userIdsData.length > 0) {
-          const routesData = await getRoutesByUserId(profile.token, selectedUserId);
-          setUserRoutes(routesData);
+          setSelectedUserId(userIdsData[0]);
         }
       } catch (error) {
         console.error('Error fetching user data:', error);
@@ -52,25 +50,32 @@ const AdminCreateRunForm = () => {
     };
 
     if (profile) {
-      fetchUserData();
+      fetchUserIds();
     }
   }, [profile]);
-  
-  useEffect(() => {
-    if (!loading && userIds.length > 0) {
-      setSelectedUserId(userIds[0]);
-    }
-  }, [loading, userIds]);
 
   useEffect(() => {
-    if (!loading && selectedUserId && userRoutes.length > 0) {
-      setSelectedRouteId(userRoutes[0].routeId);
-    }
-  }, [loading, selectedUserId, userRoutes]);
+    const fetchRoutes = async () => {
+      if (selectedUserId) {
+        setLoading(true);
+        try {
+          const routesData = await getRoutesByUserId(profile.token, selectedUserId);
+          setUserRoutes(routesData);
+          if (routesData.length > 0) {
+            setSelectedRouteId(routesData[0].routeId);
+          }
+        } catch (error) {
+          console.error('Error fetching routes:', error);
+        }
+        setLoading(false);
+      }
+    };
+
+    fetchRoutes();
+  }, [selectedUserId, profile]);
 
   useEffect(() => {
-    setFormValid(selectedUserId !== '' && distance !== '' && duration.seconds !== '' 
-    && startDateTime !== '');
+    setFormValid(selectedUserId !== '' && distance !== '' && duration.seconds !== '' && startDateTime !== '');
   }, [selectedUserId, distance, duration, startDateTime]);
 
   useEffect(() => {
@@ -143,16 +148,16 @@ const AdminCreateRunForm = () => {
     const selectedRouteId = event.target.value;
     setSelectedRouteId(selectedRouteId);
     let route = null;
-    if(selectedRouteId){
+    if (selectedRouteId) {
       try {
         route = await getRouteById(profile.token, selectedRouteId);
       } catch (error) {
         console.error('Error fetching user routes:', error);
       }
     }
-    
-    if(route && route.distance){
-      setDistance(route.distance)
+
+    if (route && route.distance) {
+      setDistance(route.distance);
     }
   };
 

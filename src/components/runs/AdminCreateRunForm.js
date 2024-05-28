@@ -62,7 +62,9 @@ const AdminCreateRunForm = () => {
           const routesData = await getRoutesByUserId(profile.token, selectedUserId);
           setUserRoutes(routesData);
           if (routesData.length > 0) {
-            setSelectedRouteId(routesData[0].routeId);
+            const firstRoute = routesData[0];
+            setSelectedRouteId(firstRoute.routeId);
+            setDistance(firstRoute.distance);
           }
         } catch (error) {
           console.error('Error fetching routes:', error);
@@ -138,6 +140,14 @@ const AdminCreateRunForm = () => {
     try {
       const routes = await getRoutesByUserId(profile.token, newUserId);
       setUserRoutes(routes);
+      if (routes.length > 0) {
+        const firstRoute = routes[0];
+        setSelectedRouteId(firstRoute.routeId);
+        setDistance(firstRoute.distance);
+      } else {
+        setSelectedRouteId('');
+        setDistance('');
+      }
     } catch (error) {
       console.error('Error fetching user routes:', error);
     }
@@ -151,13 +161,14 @@ const AdminCreateRunForm = () => {
     if (selectedRouteId) {
       try {
         route = await getRouteById(profile.token, selectedRouteId);
+        if (route) {
+          setDistance(route.distance);
+        }
       } catch (error) {
-        console.error('Error fetching user routes:', error);
+        console.error('Error fetching route:', error);
       }
-    }
-
-    if (route && route.distance) {
-      setDistance(route.distance);
+    } else {
+      setDistance('');
     }
   };
 

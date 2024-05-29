@@ -1,9 +1,10 @@
-import classes from './AdminRunTable.module.css';
+import React, { useState } from 'react';
+import { NavLink, useHistory, useLocation } from 'react-router-dom';
 import Card from '../UI/Card';
 import WideCard from '../UI/WideCard';
-import { NavLink, useHistory, useLocation } from 'react-router-dom';
-import { Fragment } from 'react';
-import {formatTimestamp, convertMetersToMiles, formatDuration} from '../util/FormatUtils'
+import RunDetailsModal from './RunDetailsModal';
+import { formatTimestamp, convertMetersToMiles, formatDuration } from '../util/FormatUtils';
+import classes from './AdminRunTable.module.css';
 
 const sortRuns = (runs, ascending) => {
   return runs.sort((runA, runB) => {
@@ -16,6 +17,7 @@ const sortRuns = (runs, ascending) => {
 };
 
 const AdminRunTable = (props) => {
+  const [selectedRun, setSelectedRun] = useState(null);
   const history = useHistory();
   const location = useLocation();
 
@@ -24,20 +26,26 @@ const AdminRunTable = (props) => {
   };
 
   const queryParams = new URLSearchParams(location.search);
-
   const isSortingAscending = queryParams.get('sort') === 'asc';
-
   const sortedRuns = sortRuns(props.runs, isSortingAscending);
 
   const changeSortingHandler = () => {
     history.push({
       pathname: location.pathname,
-      search: `?sort=${(isSortingAscending ? 'desc' : 'asc')}`
+      search: `?sort=${isSortingAscending ? 'desc' : 'asc'}`,
     });
   };
 
+  const viewRunHandler = (run) => {
+    setSelectedRun(run);
+  };
+
+  const closeModalHandler = () => {
+    setSelectedRun(null);
+  };
+
   return (
-    <Fragment>
+    <React.Fragment>
       <Card>
         <h1 className={classes.h1}>Runs</h1>
       </Card>
@@ -47,7 +55,9 @@ const AdminRunTable = (props) => {
             <NavLink to="/admin/manage-data/runs/create" className={classes.createButton}>
               Create Run
             </NavLink>
-            <button className={classes.sortButton} onClick={changeSortingHandler}>Sort {isSortingAscending ? 'Descending' : 'Ascending'}</button>
+            <button className={classes.sortButton} onClick={changeSortingHandler}>
+              Sort {isSortingAscending ? 'Descending' : 'Ascending'}
+            </button>
           </div>
           <table className={classes.runTable}>
             <thead>
@@ -70,7 +80,9 @@ const AdminRunTable = (props) => {
               {sortedRuns.map((run) => (
                 <tr className={classes.tableRow} key={run.id}>
                   <td className={classes.tableCell}>
-                    <button className={classes.viewButton}>View</button>
+                    <button className={classes.viewButton} onClick={() => viewRunHandler(run)}>
+                      View
+                    </button>
                     <button className={classes.editButton}>Edit</button>
                     <button className={classes.deleteButton}>Delete</button>
                   </td>
@@ -79,19 +91,22 @@ const AdminRunTable = (props) => {
                   <td className={classes.tableCell}>{run.runId}</td>
                   <td className={classes.tableCell}>{convertMetersToMiles(run.distance)}</td>
                   <td className={classes.tableCell}>{formatDuration(run.duration)}</td>
-                  <td className={classes.tableCell}>{run.route ? run.route.routeId : "null"}</td>
+                  <td className={classes.tableCell}>{run.route ? run.route.routeId : 'null'}</td>
                   <td className={classes.tableCell}>{run.crudEntityInfo.createdBy}</td>
                   <td className={classes.tableCell}>{formatTimestamp(run.crudEntityInfo.createDate)}</td>
-                  <td className={classes.tableCell}>{run.crudEntityInfo.updatedBy ? run.crudEntityInfo.updatedBy : "null"}</td>
+                  <td className={classes.tableCell}>
+                    {run.crudEntityInfo.updatedBy ? run.crudEntityInfo.updatedBy : 'null'}
+                  </td>
                   <td className={classes.tableCell}>{formatTimestamp(run.crudEntityInfo.updateDate)}</td>
-                  <td className={classes.tableCell}>{run.crudEntityInfo.isDeleted ? "true" : "false"}</td>
+                  <td className={classes.tableCell}>{run.crudEntityInfo.isDeleted ? 'true' : 'false'}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
       </WideCard>
-    </Fragment>
+      {selectedRun && <RunDetailsModal run={selectedRun} onClose={closeModalHandler} />}
+    </React.Fragment>
   );
 };
 

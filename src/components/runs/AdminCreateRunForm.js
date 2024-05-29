@@ -8,7 +8,7 @@ import { getRoutesByUserId, createRun, getRouteById } from '../../lib/resource-s
 import useAuthRequest from '../../hooks/use-http';
 import { KeycloakContext } from '../../App';
 import SelectUserId from '../form-fields/SelectUserId';
-import { getCurrentLocalISOString, convertMilesToMeters, convertDurationToMilliseconds } from '../util/FormatUtils';
+import { getCurrentLocalISOString, convertMilesToMeters, convertDurationToMilliseconds, convertMetersToMiles } from '../util/FormatUtils';
 
 const AdminCreateRunForm = () => {
   const history = useHistory();
@@ -30,7 +30,7 @@ const AdminCreateRunForm = () => {
 
   const fetchUserIds = useCallback(async (token) => {
     return getAllUserIds(token);
-  }, [profile]);
+  }, []);
 
   const { status: userIdsStatus, data: loadedUserIds } = useAuthRequest(fetchUserIds);
 
@@ -44,7 +44,7 @@ const AdminCreateRunForm = () => {
           setSelectedUserId(userIdsData[0]);
         }
       } catch (error) {
-        console.error('Error fetching user data:', error);
+        console.error('Error fetching user IDs:', error);
       }
       setLoading(false);
     };
@@ -64,7 +64,7 @@ const AdminCreateRunForm = () => {
           if (routesData.length > 0) {
             const firstRoute = routesData[0];
             setSelectedRouteId(firstRoute.routeId);
-            setDistance(firstRoute.distance);
+            setDistance(convertMetersToMiles(firstRoute.distance));
           }
         } catch (error) {
           console.error('Error fetching routes:', error);
@@ -143,7 +143,7 @@ const AdminCreateRunForm = () => {
       if (routes.length > 0) {
         const firstRoute = routes[0];
         setSelectedRouteId(firstRoute.routeId);
-        setDistance(firstRoute.distance);
+        setDistance(convertMetersToMiles(firstRoute.distance));
       } else {
         setSelectedRouteId('');
         setDistance('');

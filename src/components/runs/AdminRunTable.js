@@ -21,10 +21,6 @@ const AdminRunTable = (props) => {
   const history = useHistory();
   const location = useLocation();
 
-  const createRunHandler = () => {
-    history.push('/admin/create-run');
-  };
-
   const queryParams = new URLSearchParams(location.search);
   const isSortingAscending = queryParams.get('sort') === 'asc';
   const sortedRuns = sortRuns(props.runs, isSortingAscending);

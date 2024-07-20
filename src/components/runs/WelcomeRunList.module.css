@@ -23,3 +23,8 @@
 .sorting button:hover {
   background-color: #c2fafa;
 }
+
+.header {
+  font: inherit;
+  color: teal;
+}

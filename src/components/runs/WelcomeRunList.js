@@ -2,7 +2,7 @@ import { Fragment } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import RunItem from './RunItem';
-import classes from './RunList.module.css';
+import classes from './WelcomeRunList.module.css';
 
 const sortRuns = (runs, ascending) => {
   return runs.sort((runA, runB) => {
@@ -38,6 +38,7 @@ const RunList = (props) => {
           Sort {isSortingAscending ? 'Descending' : 'Ascending'}
         </button>
       </div>
+      <div className={classes.header}>👟 Runs:</div>
       <ul className={classes.list}>
         {sortedRuns.map((run) => (
           <RunItem

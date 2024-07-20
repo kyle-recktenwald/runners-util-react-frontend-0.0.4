@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 
-import RunList from '../components/runs/RunList';
+import RunList from '../components/runs/WelcomeRunList';
 import LoadingSpinner from '../components/UI/LoadingSpinner';
 import NoRunsFound from '../components/runs/NoRunsFound';
 import useAuthRequest from '../hooks/use-http';

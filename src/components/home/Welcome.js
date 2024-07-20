@@ -1,14 +1,14 @@
 import { Fragment } from 'react';
 import Card from '../UI/Card';
+import RunList from '../runs/WelcomeRunList';
 import classes from './Welcome.module.css';
+import WelcomeRunContainer from '../runs/WelcomeRunContainer';
 
 const Welcome = () => {
   return (
     <Fragment>
-      <Card>
-        <h1 className={classes.h1}>Welcome to Runtils!</h1>
-        <h2 className={classes.h2}>A runner's utility application</h2>
-      </Card>
+      <WelcomeRunContainer>
+      </WelcomeRunContainer>
     </Fragment>
   );
 };

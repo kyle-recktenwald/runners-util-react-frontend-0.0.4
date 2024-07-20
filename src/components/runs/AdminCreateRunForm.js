@@ -162,7 +162,7 @@ const AdminCreateRunForm = () => {
       try {
         route = await getRouteById(profile.token, selectedRouteId);
         if (route) {
-          setDistance(route.distance);
+          setDistance(convertMetersToMiles(route.distance));
         }
       } catch (error) {
         console.error('Error fetching route:', error);
